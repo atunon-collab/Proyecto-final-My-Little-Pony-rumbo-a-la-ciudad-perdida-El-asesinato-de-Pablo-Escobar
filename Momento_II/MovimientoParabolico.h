@@ -3,7 +3,7 @@
 
 #include <QPointF>
 
-// Tiro parabolico calculado paso a paso (y crece hacia abajo)
+// Tiro parabolico (y crece hacia abajo)
 class MovimientoParabolico
 {
 public:
