@@ -1,15 +1,21 @@
 #include <QApplication>
-#include <QMainWindow>
-#include "Constantes.h"
+#include <QMessageBox>
+#include "Juego.h"
+#include "ErrorJuego.h"
+#include "Estilo.h"
 
 int main(int argc, char* argv[])
 {
+    // El juego se dibuja en pixeles reales (1280x720) aunque Windows tenga la pantalla escalada
     qputenv("QT_ENABLE_HIGHDPI_SCALING", "0");
     QApplication app(argc, argv);
-
-    QMainWindow ventana;
-    ventana.setWindowTitle("Rumbo a la Ciudad Perdida: El Asesinato de Pablo Escobar");
-    ventana.setFixedSize(ANCHO_PANTALLA, ALTO_PANTALLA);
-    ventana.show();
-    return app.exec();
+    try {
+        cargarFuentes();
+        Juego juego;
+        juego.show();
+        return app.exec();
+    } catch (const ErrorJuego& error) {
+        QMessageBox::critical(nullptr, "Error", error.getMensaje());
+        return 1;
+    }
 }
