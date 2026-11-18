@@ -2,11 +2,13 @@
 #include "Constantes.h"
 #include "Pantalla.h"
 #include "Menu.h"
+#include "Escena.h"
+#include "Textos.h"
 #include "Sonido.h"
 #include "Recursos.h"
 
 Juego::Juego()
-    : puntaje(0), paso(PASO_MENU), menu(nullptr)
+    : puntaje(0), paso(PASO_MENU), menu(nullptr), escena(nullptr)
 {
     setWindowTitle("Rumbo a la Ciudad Perdida: El Asesinato de Pablo Escobar");
     vista = new QGraphicsView(this);
@@ -43,21 +45,45 @@ Juego::~Juego()
 
 Pantalla* Juego::pantallaActual() const
 {
-    return menu;
+    if (menu != nullptr) {
+        return menu;
+    }
+    return escena;
 }
 
 void Juego::borrarPantalla()
 {
     delete menu;
+    delete escena;
     menu = nullptr;
+    escena = nullptr;
 }
 
 void Juego::irAPaso(int nuevoPaso)
 {
     borrarPantalla();
     paso = nuevoPaso;
-    puntaje = 0;
-    menu = new Menu(this);
+    switch (paso) {
+    case PASO_MENU:
+        puntaje = 0;
+        menu = new Menu(this);
+        break;
+    case PASO_INTRO:
+        escena = new Escena(this, escenaIntro());
+        break;
+    case PASO_CAPTURA:
+        escena = new Escena(this, escenaCaptura());
+        break;
+    case PASO_VIAJE_SIERRA:
+        escena = new Escena(this, escenaViajeSierra());
+        break;
+    case PASO_FINAL:
+        escena = new Escena(this, escenaFinal());
+        break;
+    default:
+        escena = new Escena(this, escenaCreditos(puntaje));
+        break;
+    }
     vista->setScene(pantallaActual()->getEscena());
     vista->setSceneRect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA);
 }
@@ -70,6 +96,8 @@ void Juego::keyPressEvent(QKeyEvent* evento)
     int tecla = evento->key();
     if (menu != nullptr) {
         menu->teclaPresionada(tecla);
+    } else if (escena != nullptr) {
+        escena->teclaPresionada(tecla);
     }
 }
 
@@ -84,6 +112,8 @@ void Juego::cicloDelJuego()
 {
     if (menu != nullptr) {
         menu->actualizar(DT);
+    } else if (escena != nullptr) {
+        escena->actualizar(DT);
     }
 
     Pantalla* actual = pantallaActual();

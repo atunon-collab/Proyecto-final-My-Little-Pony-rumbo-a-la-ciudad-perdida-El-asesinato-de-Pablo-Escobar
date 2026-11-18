@@ -10,6 +10,7 @@
 
 class Pantalla;
 class Menu;
+class Escena;
 class Sonido;
 
 enum Paso {
@@ -47,6 +48,7 @@ private:
     MemoriaRelojero memoria;
     int paso;
     Menu* menu;
+    Escena* escena;
 
     Pantalla* pantallaActual() const;
     void borrarPantalla();
