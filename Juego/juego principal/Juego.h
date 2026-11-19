@@ -11,6 +11,7 @@
 class Pantalla;
 class Menu;
 class Escena;
+class NivelMedellin;
 class Sonido;
 
 enum Paso {
@@ -49,6 +50,7 @@ private:
     int paso;
     Menu* menu;
     Escena* escena;
+    NivelMedellin* medellin;
 
     Pantalla* pantallaActual() const;
     void borrarPantalla();
