@@ -1,0 +1,67 @@
+classDiagram
+direction TB
+class QMainWindow
+class QGraphicsPixmapItem
+class QGraphicsSimpleTextItem
+class Juego
+class Pantalla
+class Menu
+class Escena
+class Nivel
+class NivelMedellin
+class NivelLateral
+class NivelCiudadPerdida
+class TextoBorde
+class Entidad
+class Personaje
+class Poni
+class Twilight
+class Applejack
+class Relojero
+class Patrullero
+class ManeIac
+class Proyectil
+class Manzana
+class ObjetoPendular
+class AnomaliaTemporal
+class Portal
+class Efecto
+class MovimientoParabolico
+class MovimientoPendular
+class MovimientoCircular
+class MemoriaRelojero {
+  <<struct>>
+}
+
+QMainWindow <|-- Juego
+Juego *-- Pantalla
+Juego *-- MemoriaRelojero
+Pantalla <|-- Menu
+Pantalla <|-- Escena
+Pantalla <|-- Nivel
+Nivel <|-- NivelMedellin
+Nivel <|-- NivelLateral
+NivelLateral <|-- NivelCiudadPerdida
+QGraphicsSimpleTextItem <|-- TextoBorde
+Pantalla ..> TextoBorde
+QGraphicsPixmapItem <|-- Entidad
+Nivel ..> Entidad
+Entidad <|-- Personaje
+Entidad <|-- Proyectil
+Entidad <|-- Manzana
+Entidad <|-- ObjetoPendular
+Entidad <|-- AnomaliaTemporal
+Entidad <|-- Portal
+Entidad <|-- Efecto
+Personaje <|-- Poni
+Personaje <|-- Relojero
+Personaje <|-- Patrullero
+Personaje <|-- ManeIac
+Poni <|-- Twilight
+Poni <|-- Applejack
+Manzana *-- MovimientoParabolico
+Applejack *-- MovimientoParabolico
+ObjetoPendular *-- MovimientoPendular
+AnomaliaTemporal *-- MovimientoCircular
+Portal *-- MovimientoCircular
+Relojero o-- MemoriaRelojero
