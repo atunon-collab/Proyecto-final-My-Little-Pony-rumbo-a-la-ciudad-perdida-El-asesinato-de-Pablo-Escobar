@@ -103,10 +103,10 @@ void Escena::teclaPresionada(int tecla)
         textoDialogo->setPlainText(texto);
         return;
     }
-    linea++;
-    if (linea >= int(datos.lineas.size())) {
+    if (linea + 1 >= int(datos.lineas.size())) {
         terminar(RES_GANO);
         return;
     }
+    linea++;
     empezarLinea();
 }
