@@ -12,6 +12,7 @@ class Pantalla;
 class Menu;
 class Escena;
 class NivelMedellin;
+class NivelCiudadPerdida;
 class Sonido;
 
 enum Paso {
@@ -51,6 +52,7 @@ private:
     Menu* menu;
     Escena* escena;
     NivelMedellin* medellin;
+    NivelCiudadPerdida* ciudad;
 
     Pantalla* pantallaActual() const;
     void borrarPantalla();

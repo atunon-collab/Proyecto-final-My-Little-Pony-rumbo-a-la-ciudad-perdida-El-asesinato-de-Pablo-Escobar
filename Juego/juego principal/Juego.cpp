@@ -5,11 +5,12 @@
 #include "Escena.h"
 #include "Textos.h"
 #include "NivelMedellin.h"
+#include "NivelCiudadPerdida.h"
 #include "Sonido.h"
 #include "Recursos.h"
 
 Juego::Juego()
-    : puntaje(0), paso(PASO_MENU), menu(nullptr), escena(nullptr), medellin(nullptr)
+    : puntaje(0), paso(PASO_MENU), menu(nullptr), escena(nullptr), medellin(nullptr), ciudad(nullptr)
 {
     setWindowTitle("Rumbo a la Ciudad Perdida: El Asesinato de Pablo Escobar");
     vista = new QGraphicsView(this);
@@ -52,7 +53,10 @@ Pantalla* Juego::pantallaActual() const
     if (escena != nullptr) {
         return escena;
     }
-    return medellin;
+    if (medellin != nullptr) {
+        return medellin;
+    }
+    return ciudad;
 }
 
 void Juego::borrarPantalla()
@@ -60,9 +64,11 @@ void Juego::borrarPantalla()
     delete menu;
     delete escena;
     delete medellin;
+    delete ciudad;
     menu = nullptr;
     escena = nullptr;
     medellin = nullptr;
+    ciudad = nullptr;
 }
 
 void Juego::irAPaso(int nuevoPaso)
@@ -85,6 +91,9 @@ void Juego::irAPaso(int nuevoPaso)
         break;
     case PASO_VIAJE_SIERRA:
         escena = new Escena(this, escenaViajeSierra());
+        break;
+    case PASO_CIUDAD_PERDIDA:
+        ciudad = new NivelCiudadPerdida(this, &memoria);
         break;
     case PASO_FINAL:
         escena = new Escena(this, escenaFinal());
@@ -109,6 +118,8 @@ void Juego::keyPressEvent(QKeyEvent* evento)
         escena->teclaPresionada(tecla);
     } else if (medellin != nullptr) {
         medellin->teclaPresionada(tecla);
+    } else if (ciudad != nullptr) {
+        ciudad->teclaPresionada(tecla);
     }
 }
 
@@ -127,6 +138,8 @@ void Juego::cicloDelJuego()
         escena->actualizar(DT);
     } else if (medellin != nullptr) {
         medellin->actualizar(DT);
+    } else if (ciudad != nullptr) {
+        ciudad->actualizar(DT);
     }
 
     Pantalla* actual = pantallaActual();
