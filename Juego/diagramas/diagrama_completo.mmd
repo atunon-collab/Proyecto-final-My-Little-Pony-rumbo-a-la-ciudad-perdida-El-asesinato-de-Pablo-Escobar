@@ -1,0 +1,333 @@
+classDiagram
+direction TB
+
+namespace Qt {
+  class QMainWindow
+  class QGraphicsPixmapItem
+  class QGraphicsScene
+  class QGraphicsView
+  class QTimer
+  class QGraphicsSimpleTextItem
+}
+
+namespace Nucleo {
+  class Juego {
+    -QGraphicsView* vista
+    -QTimer* temporizador
+    -Sonido* sonido
+    -Configuracion config
+    -MemoriaRelojero memoria
+    -int paso
+    -Menu* menu
+    -Escena* escena
+    -NivelMedellin* medellin
+    -NivelCiudadPerdida* ciudad
+    +int puntaje
+    +setDificultad(int)
+    -cicloDelJuego()
+    -irAPaso(int)
+    #keyPressEvent(QKeyEvent*)
+    #keyReleaseEvent(QKeyEvent*)
+  }
+  class Configuracion {
+    <<struct>>
+    +double tiempoPortal
+    +double esperaProyectil
+    +double errorPunteria
+    +double rapidezProyectil
+    +double alfa
+    +int henchponies
+    +int totems
+  }
+  class Sonido {
+    -QMediaPlayer* reproductorMusica
+    -map~QString,QSoundEffect*~ efectos
+    +musica(QString)
+    +efecto(QString)
+    +voz(QString)
+  }
+  class ErrorJuego {
+    -QString mensaje
+    +getMensaje() QString
+  }
+  class TextoBorde {
+    -QGraphicsSimpleTextItem* relleno
+    +setTexto(QString)
+    +setColor(QColor)
+  }
+}
+
+namespace Pantallas {
+  class Pantalla {
+    #Juego* juego
+    #QGraphicsScene* escena
+    #map~int,bool~ teclas
+    #bool terminada
+    +teclaPresionada(int)
+    +teclaSoltada(int)
+    +estaTerminada() bool
+  }
+  class Menu {
+    -int estado
+    -int opcion
+    +actualizar(double)
+    +teclaPresionada(int)
+  }
+  class Escena {
+    -DatosEscena datos
+    -vector~Figura*~ figuras
+    -int linea
+    +actualizar(double)
+    +teclaPresionada(int)
+  }
+  class Textos {
+    <<datos>>
+    +escenaIntro() DatosEscena
+    +analisisPrueba(int) QString
+  }
+}
+
+namespace Niveles {
+  class Nivel {
+    #Configuracion config
+    #QRectF camara
+    #int golpesAlJugador
+    #int golpesAlRelojero
+    +teclaPresionada(int)
+    +borrarInactivas(vector~T*~)
+    #empezarCuadro(double) bool
+    #terminarCuadro(double)
+    #moverCamara(QPointF)
+    #mostrarMensaje(QString, double)
+    #ganar(int)
+    #perder(QString)
+  }
+  class NivelMedellin {
+    -Twilight* twilight
+    -Relojero* relojero
+    -Portal* portal
+    -vector~Techo*~ techos
+    -vector~Prueba*~ pruebas
+    -vector~Proyectil*~ granadas
+    -double tiempoRestante
+    +actualizar(double)
+    +teclaPresionada(int)
+    -moverTwilight(double)
+    -ejecutarAccion(Accion)
+  }
+  class NivelLateral {
+    #vector~Plataforma*~ plataformas
+    #vector~ObjetoFijo*~ solidos
+    #double gravedad
+    #moverConGravedad(Entidad*, MovimientoParabolico&, double, Plataforma*&) bool
+    #chocaConAlgo(QRectF) bool
+  }
+  class NivelCiudadPerdida {
+    -Applejack* aj
+    -Relojero* relojero
+    -ManeIac* maneiac
+    -vector~Liana*~ lianas
+    -vector~TrampaColgante*~ trampas
+    -vector~Manzana*~ tiros
+    -bool faseJefe
+    +actualizar(double)
+    +teclaPresionada(int)
+    -lanzarManzana()
+    -ejecutarAccion(Accion)
+  }
+}
+
+namespace Entidades {
+  class Entidad {
+    #bool activa
+    #QGraphicsRectItem* caja
+    #map~QString,Animacion~ animaciones
+    +colisionaCon(Entidad*) bool
+    +agregarAnimacion(QString, QString)
+    +ponerAnimacion(QString)
+    +setAltura(double)
+  }
+  class Proyectil {
+    -double vx
+    -double vy
+    +actualizar(double)
+  }
+  class Manzana {
+    -MovimientoParabolico trayectoria
+    +actualizar(double)
+  }
+  class ObjetoPendular {
+    #MovimientoPendular pendulo
+    +actualizar(double)
+  }
+  class Liana
+  class TrampaColgante {
+    +actualizar(double)
+    +acelerar()
+  }
+  class AnomaliaTemporal {
+    -MovimientoCircular giro
+    +actualizar(double)
+    +empujeTangente() QPointF
+  }
+  class Portal {
+    -vector~MovimientoCircular~ giros
+    +actualizar(double)
+  }
+  class Plataforma {
+    +actualizar(double)
+    +esSolida() bool
+    +getRect() QRectF
+  }
+  class Techo
+  class Item
+  class Prueba
+  class ObjetoFijo {
+    +golpear() bool
+  }
+  class Efecto {
+    +actualizar(double)
+  }
+}
+
+namespace Personajes {
+  class Personaje {
+    #int vida
+    #double rapidez
+    #QPointF velocidad
+    +recibirDanio(int)
+    +curar(int)
+  }
+  class Poni {
+    #QString nombre
+  }
+  class Twilight {
+    +double magia
+    +double congelada
+    -double vz
+    +actualizar(double)
+    +saltar()
+  }
+  class Applejack {
+    +MovimientoParabolico movimiento
+    +bool enSuelo
+    -MovimientoPendular* colgadoDe
+    -MovimientoPendular* lazo
+    +actualizar(double)
+    +lanzarLazo(QPointF, bool)
+  }
+  class Patrullero {
+    +actualizar(double)
+  }
+  class ManeIac {
+    +actualizar(double)
+    +recibirDanio(int)
+  }
+}
+
+namespace Fisicas {
+  class MovimientoParabolico {
+    -double x
+    -double y
+    -double vx
+    -double vy
+    -double g
+    +lanzar(QPointF, double, double)
+    +actualizar(double)
+  }
+  class MovimientoCircular {
+    -QPointF centro
+    -double radio
+    -double omega
+    -double angulo
+    +actualizar(double)
+    +posicion() QPointF
+  }
+  class MovimientoPendular {
+    -QPointF pivote
+    -double longitud
+    -double amplitud
+    -double omega
+    -double fase
+    +actualizar(double)
+    +posicion() QPointF
+  }
+}
+
+namespace Agente {
+  class Relojero {
+    -MemoriaRelojero* memoria
+    -double alfa
+    -double esperas[5]
+    +pensar(double, DatosNivel) bool
+    +getAccion() Accion
+    -percibir(DatosNivel) Situacion
+    -decidir(Situacion, DatosNivel) Accion
+    -aprender(DatosNivel)
+  }
+  class MemoriaRelojero {
+    <<struct>>
+    +double tablaQ[5][5]
+    +double epsilon
+  }
+  class DatosNivel {
+    <<struct>>
+    +QPointF posJugador
+    +bool jugadorEnAire
+    +int golpesAlJugador
+    +bool disponible[5]
+  }
+}
+
+QMainWindow <|-- Juego
+QGraphicsSimpleTextItem <|-- TextoBorde
+QGraphicsPixmapItem <|-- Entidad
+Juego *-- Menu
+Juego *-- Escena
+Juego *-- NivelMedellin
+Juego *-- NivelCiudadPerdida
+Juego *-- Sonido
+Juego *-- MemoriaRelojero
+Juego --> QGraphicsView
+Juego --> QTimer
+Pantalla *-- QGraphicsScene
+Pantalla <|-- Menu
+Pantalla <|-- Escena
+Pantalla <|-- Nivel
+Escena ..> Textos
+Nivel <|-- NivelMedellin
+Nivel <|-- NivelLateral
+NivelLateral <|-- NivelCiudadPerdida
+Entidad <|-- Personaje
+Entidad <|-- Proyectil
+Entidad <|-- Manzana
+Entidad <|-- ObjetoPendular
+ObjetoPendular <|-- Liana
+ObjetoPendular <|-- TrampaColgante
+Entidad <|-- AnomaliaTemporal
+Entidad <|-- Portal
+Entidad <|-- Plataforma
+Entidad <|-- Techo
+Entidad <|-- Item
+Entidad <|-- Prueba
+Entidad <|-- ObjetoFijo
+Entidad <|-- Efecto
+Personaje <|-- Poni
+Poni <|-- Twilight
+Poni <|-- Applejack
+Personaje <|-- Patrullero
+Personaje <|-- ManeIac
+Personaje <|-- Relojero
+Manzana *-- MovimientoParabolico
+Applejack *-- MovimientoParabolico
+Applejack o-- MovimientoPendular
+ObjetoPendular *-- MovimientoPendular
+AnomaliaTemporal *-- MovimientoCircular
+Portal *-- MovimientoCircular
+Relojero o-- MemoriaRelojero
+Relojero ..> DatosNivel
+NivelMedellin *-- Twilight
+NivelMedellin *-- Relojero
+NivelCiudadPerdida *-- Applejack
+NivelCiudadPerdida *-- Relojero
+Nivel ..> ErrorJuego
