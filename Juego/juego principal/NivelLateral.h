@@ -21,7 +21,7 @@ protected:
                                   TipoPlataforma tipo = PLAT_FIJA, double fase = 0);
     bool chocaConAlgo(QRectF caja) const;
     bool moverConGravedad(Entidad* entidad, MovimientoParabolico& movimiento, double dt, Plataforma*& debajo);
-    bool apoyarOChocar(Entidad* entidad, MovimientoParabolico& movimiento, QRectF obstaculo);
+    bool apoyarOChocar(Entidad* entidad, MovimientoParabolico& movimiento, QRectF obstaculo, QRectF& caja);
 };
 
 #endif
