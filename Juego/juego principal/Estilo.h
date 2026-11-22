@@ -21,9 +21,11 @@ public:
     TextoBorde(const QString& texto, const QFont& fuente, const QColor& color, double grosor);
     void setTexto(const QString& texto);
     void setColor(const QColor& color);
+    QRectF boundingRect() const override;
 
 private:
     QGraphicsSimpleTextItem* relleno;
+    double margen;
 };
 
 #endif
