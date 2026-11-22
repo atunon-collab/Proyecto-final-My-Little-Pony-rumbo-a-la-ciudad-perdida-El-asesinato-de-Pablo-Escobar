@@ -9,6 +9,8 @@ Pantalla::Pantalla(Juego* juego)
 {
     escena = new QGraphicsScene(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA);
     escena->setBackgroundBrush(Qt::black);
+    // Casi todo se mueve en cada cuadro: sin indice Qt no tiene que reordenar un arbol en cada movimiento
+    escena->setItemIndexMethod(QGraphicsScene::NoIndex);
 }
 
 Pantalla::~Pantalla()

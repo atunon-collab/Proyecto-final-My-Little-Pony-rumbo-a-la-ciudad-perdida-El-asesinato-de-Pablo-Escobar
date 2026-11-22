@@ -13,7 +13,7 @@ const int MENU_CONTROLES = 2;
 
 static void centrar(TextoBorde* item, double y)
 {
-    item->setPos((ANCHO_PANTALLA - item->boundingRect().width()) / 2, y);
+    item->setPos(ANCHO_PANTALLA / 2.0 - item->boundingRect().center().x(), y);
 }
 
 Menu::Menu(Juego* juego)

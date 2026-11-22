@@ -20,6 +20,9 @@ Juego::Juego()
     vista->setFrameShape(QFrame::NoFrame);
     vista->setFocusPolicy(Qt::NoFocus);
     vista->setBackgroundBrush(Qt::black);
+    // En los niveles cambia toda la pantalla en cada cuadro, asi que se repinta entera sin calcular regiones
+    vista->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    vista->setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing | QGraphicsView::DontSavePainterState);
     setCentralWidget(vista);
     setFixedSize(ANCHO_PANTALLA, ALTO_PANTALLA);
 
