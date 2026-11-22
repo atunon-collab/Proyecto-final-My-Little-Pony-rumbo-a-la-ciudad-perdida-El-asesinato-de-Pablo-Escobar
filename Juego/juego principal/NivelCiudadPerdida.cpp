@@ -36,7 +36,7 @@ static double azar(double minimo, double maximo)
 
 NivelCiudadPerdida::NivelCiudadPerdida(Juego* juego, MemoriaRelojero* memoria)
     : NivelLateral(juego, ANCHO_PANTALLA, ALTO_CIUDAD, GRAVEDAD), aj(nullptr), relojero(nullptr), maneiac(nullptr),
-      escalera(nullptr), fondo(nullptr), perchaActual(0), faseJefe(false), alturaMaxima(0)
+      escalera(nullptr), fondo(nullptr), perchaActual(0), faseJefe(false), alturaMaxima(0), valorHud(-1)
 {
     cargar(memoria);
 }
@@ -293,8 +293,9 @@ void NivelCiudadPerdida::actualizarTiros(double dt)
         if (manzana->y() > altoMundo || manzana->x() < 0 || manzana->x() > anchoMundo) {
             manzana->desactivar();
         }
+        QRectF caja = manzana->getCaja();
         for (Plataforma* p : plataformas) {
-            if (manzana->estaActiva() && p->esSolida() && manzana->getCaja().intersects(p->getRect())) {
+            if (manzana->estaActiva() && p->esSolida() && caja.intersects(p->getRect())) {
                 crearEfecto("efecto_polvo", manzana->pos(), 40, 0.3, 1.5);
                 manzana->desactivar();
             }
@@ -620,10 +621,16 @@ void NivelCiudadPerdida::actualizar(double dt)
 void NivelCiudadPerdida::actualizarHud()
 {
     mostrarCorazones(aj->getVida());
+    // El texto solo se arma de nuevo cuando cambia el numero que muestra
+    int porcentaje = qBound(0, int(100 * (ALTO_CIUDAD - aj->y()) / (ALTO_CIUDAD - Y_CIMA)), 100);
+    int valor = faseJefe ? 1000 + golpesAlRelojero : porcentaje;
+    if (valor == valorHud) {
+        return;
+    }
+    valorHud = valor;
     if (faseJefe) {
         textoAltura->setTexto("Relojero " + QString(3 - golpesAlRelojero, QChar(0x2665)) + QString(golpesAlRelojero, QChar(0x2661)));
     } else {
-        int porcentaje = int(100 * (ALTO_CIUDAD - aj->y()) / (ALTO_CIUDAD - Y_CIMA));
-        textoAltura->setTexto("Altura " + QString::number(qBound(0, porcentaje, 100)) + "%");
+        textoAltura->setTexto("Altura " + QString::number(porcentaje) + "%");
     }
 }

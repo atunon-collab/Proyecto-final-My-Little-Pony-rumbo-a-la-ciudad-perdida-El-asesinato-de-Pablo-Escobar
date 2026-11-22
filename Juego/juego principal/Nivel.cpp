@@ -21,11 +21,18 @@ Nivel::Nivel(Juego* juego, double anchoMundo, double altoMundo)
 {
     escena->setSceneRect(0, 0, anchoMundo, altoMundo);
 
+    // Todo el HUD cuelga de esta capa: cada cuadro se mueve solo ella con la camara
+    capaHud = new QGraphicsRectItem();
+    capaHud->setFlag(QGraphicsItem::ItemHasNoContents);
+    capaHud->setZValue(1000);
+    escena->addItem(capaHud);
+
     bannerMensaje = escena->addPixmap(cargarImagen(":/fondos/ui_mensaje.png"));
     agregarHud(bannerMensaje, 90, 128);
     bannerMensaje->setZValue(1300);
     bannerMensaje->setVisible(false);
     textoMensaje = agregarTextoBorde("", fuenteTexto(26), CREMA, 0, 0, 3);
+    agregarHud(textoMensaje, 0, 0);
     textoMensaje->setZValue(1301);
 
     panelPausa = escena->addPixmap(cargarImagen(":/fondos/ui_pausa.png"));
@@ -34,6 +41,7 @@ Nivel::Nivel(Juego* juego, double anchoMundo, double altoMundo)
     panelPausa->setVisible(false);
     for (int i = 0; i < 4; i++) {
         TextoBorde* linea = agregarTextoBorde("", fuenteTexto(i == 0 ? 40 : 28), CREMA, 0, 0, 3);
+        agregarHud(linea, 0, 0);
         linea->setZValue(1501);
         lineasPanel.push_back(linea);
     }
@@ -80,16 +88,7 @@ void Nivel::terminarCuadro(double dt)
             }
         }
     }
-    for (const ItemHud& itemHud : hud) {
-        itemHud.item->setPos(camara.topLeft() + itemHud.desplazamiento);
-    }
-    double anchoTexto = textoMensaje->boundingRect().width();
-    double altoTexto = textoMensaje->boundingRect().height();
-    textoMensaje->setPos(camara.left() + (ANCHO_PANTALLA - anchoTexto) / 2, camara.top() + 168 - altoTexto / 2);
-    for (int i = 0; i < 4; i++) {
-        double anchoLinea = lineasPanel[i]->boundingRect().width();
-        lineasPanel[i]->setPos(camara.left() + (ANCHO_PANTALLA - anchoLinea) / 2, camara.top() + 225 + i * 60 + (i > 0 ? 20 : 0));
-    }
+    capaHud->setPos(camara.topLeft());
 }
 
 void Nivel::moverCamara(QPointF centro)
@@ -101,15 +100,17 @@ void Nivel::moverCamara(QPointF centro)
     if (x > anchoMundo - ANCHO_PANTALLA) x = anchoMundo - ANCHO_PANTALLA;
     if (y > altoMundo - ALTO_PANTALLA) y = altoMundo - ALTO_PANTALLA;
     camara = QRectF(x, y, ANCHO_PANTALLA, ALTO_PANTALLA);
-    juego->getVista()->setSceneRect(camara);
+    // Se compara con la vista y no con la camara anterior: Juego reinicia la vista al crear el nivel
+    if (juego->getVista()->sceneRect() != camara) {
+        juego->getVista()->setSceneRect(camara);
+    }
 }
 
 void Nivel::agregarHud(QGraphicsItem* item, double x, double y)
 {
-    ItemHud itemHud;
-    itemHud.item = item;
-    itemHud.desplazamiento = QPointF(x, y);
-    hud.push_back(itemHud);
+    // Las posiciones del HUD quedan relativas a la esquina de la pantalla
+    item->setParentItem(capaHud);
+    item->setPos(x, y);
     if (item->zValue() < 1000) {
         item->setZValue(1000);
     }
@@ -186,6 +187,8 @@ void Nivel::mostrarCorazones(int vida)
 void Nivel::mostrarMensaje(const QString& texto, double segundos)
 {
     textoMensaje->setTexto(texto);
+    QPointF centro = textoMensaje->boundingRect().center();
+    textoMensaje->setPos(ANCHO_PANTALLA / 2.0 - centro.x(), 168 - centro.y());
     bool dosLineas = texto.contains("\n");
     bannerMensaje->setPixmap(cargarImagen(dosLineas ? ":/fondos/ui_mensaje_alto.png" : ":/fondos/ui_mensaje.png"));
     bannerMensaje->setOffset(0, dosLineas ? -6 : 0);
@@ -217,6 +220,8 @@ void Nivel::mostrarPanel(const QString& titulo, const QString& linea1, const QSt
     for (int i = 0; i < 4; i++) {
         lineasPanel[i]->setTexto(textos[i]);
         lineasPanel[i]->setColor(i == 0 || i == resaltada ? DORADO : CREMA);
+        double centroX = lineasPanel[i]->boundingRect().center().x();
+        lineasPanel[i]->setPos(ANCHO_PANTALLA / 2.0 - centroX, 225 + i * 60 + (i > 0 ? 20 : 0));
     }
 }
 

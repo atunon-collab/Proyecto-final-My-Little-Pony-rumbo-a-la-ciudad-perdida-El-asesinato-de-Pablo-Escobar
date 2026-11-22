@@ -52,14 +52,16 @@ bool NivelLateral::moverConGravedad(Entidad* entidad, MovimientoParabolico& movi
     bool enSuelo = false;
     debajo = nullptr;
     entidad->setY(nueva.y());
+    // La caja se calcula una vez y solo se recalcula cuando un choque mueve a la entidad
+    QRectF caja = entidad->getCaja();
     for (Plataforma* p : plataformas) {
-        if (p->esSolida() && apoyarOChocar(entidad, movimiento, p->getRect())) {
+        if (p->esSolida() && apoyarOChocar(entidad, movimiento, p->getRect(), caja)) {
             enSuelo = true;
             debajo = p;
         }
     }
     for (ObjetoFijo* solido : solidos) {
-        if (solido->estaActiva() && apoyarOChocar(entidad, movimiento, solido->getCaja())) {
+        if (solido->estaActiva() && apoyarOChocar(entidad, movimiento, solido->getCaja(), caja)) {
             enSuelo = true;
         }
     }
@@ -67,9 +69,8 @@ bool NivelLateral::moverConGravedad(Entidad* entidad, MovimientoParabolico& movi
     return enSuelo;
 }
 
-bool NivelLateral::apoyarOChocar(Entidad* entidad, MovimientoParabolico& movimiento, QRectF obstaculo)
+bool NivelLateral::apoyarOChocar(Entidad* entidad, MovimientoParabolico& movimiento, QRectF obstaculo, QRectF& caja)
 {
-    QRectF caja = entidad->getCaja();
     if (!caja.intersects(obstaculo)) {
         return false;
     }
@@ -80,5 +81,6 @@ bool NivelLateral::apoyarOChocar(Entidad* entidad, MovimientoParabolico& movimie
         entidad->setY(entidad->y() + obstaculo.bottom() - caja.top());
     }
     movimiento.setVy(0);
+    caja = entidad->getCaja();
     return bajando;
 }

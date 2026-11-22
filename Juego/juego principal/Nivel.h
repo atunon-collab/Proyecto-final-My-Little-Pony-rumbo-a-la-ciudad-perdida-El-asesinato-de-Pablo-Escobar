@@ -4,16 +4,11 @@
 #include "Pantalla.h"
 #include "Configuracion.h"
 #include <vector>
+#include <algorithm>
 
 class Entidad;
 class Efecto;
 class TextoBorde;
-
-struct ItemHud
-{
-    QGraphicsItem* item;
-    QPointF desplazamiento;
-};
 
 // Lo que tienen en comun los dos niveles
 class Nivel : public Pantalla
@@ -27,15 +22,15 @@ public:
     template <typename T>
     void borrarInactivas(std::vector<T*>& lista)
     {
-        int i = 0;
-        while (i < int(lista.size())) {
-            if (!lista[i]->estaActiva()) {
-                delete lista[i];
-                lista.erase(lista.begin() + i);
-            } else {
-                i++;
+        // Una sola pasada: se borran las inactivas y las activas se corren hacia adelante
+        auto fin = std::remove_if(lista.begin(), lista.end(), [](T* entidad) {
+            if (entidad->estaActiva()) {
+                return false;
             }
-        }
+            delete entidad;
+            return true;
+        });
+        lista.erase(fin, lista.end());
     }
 
 protected:
@@ -69,7 +64,7 @@ private:
     double tiempoEstado;
     int opcionPausa;
     double tiempoMensaje;
-    std::vector<ItemHud> hud;
+    QGraphicsRectItem* capaHud;
     std::vector<Efecto*> efectos;
     std::vector<QGraphicsPixmapItem*> corazones;
     TextoBorde* textoMensaje;
