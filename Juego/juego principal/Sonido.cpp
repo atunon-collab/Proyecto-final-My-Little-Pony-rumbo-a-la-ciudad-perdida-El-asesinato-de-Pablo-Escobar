@@ -1,0 +1,88 @@
+#include "Sonido.h"
+#include <QMediaPlayer>
+#include <QAudioOutput>
+#include <QSoundEffect>
+#include <QUrl>
+#include <QFile>
+#include <QCoreApplication>
+
+Sonido::Sonido()
+{
+    reproductorMusica = new QMediaPlayer();
+    salidaMusica = new QAudioOutput();
+    salidaMusica->setVolume(0.45);
+    reproductorMusica->setAudioOutput(salidaMusica);
+    reproductorMusica->setLoops(QMediaPlayer::Infinite);
+
+    reproductorVoz = new QMediaPlayer();
+    salidaVoz = new QAudioOutput();
+    salidaVoz->setVolume(0.9);
+    reproductorVoz->setAudioOutput(salidaVoz);
+
+    const char* nombres[] = { "salto", "teleport", "explosion", "golpe", "recoger", "patada",
+                              "portal", "victoria", "seleccion", "romper" };
+    for (const char* nombre : nombres) {
+        QSoundEffect* efecto = new QSoundEffect();
+        efecto->setSource(QUrl(QString("qrc:/sonidos/") + nombre + ".wav"));
+        efecto->setVolume(0.6);
+        efectos[nombre] = efecto;
+    }
+}
+
+Sonido::~Sonido()
+{
+    for (auto& par : efectos) {
+        delete par.second;
+    }
+    delete reproductorMusica;
+    delete salidaMusica;
+    delete reproductorVoz;
+    delete salidaVoz;
+}
+
+void Sonido::musica(const QString& nombre)
+{
+    if (nombre == musicaActual) {
+        return;
+    }
+    musicaActual = nombre;
+    reproductorMusica->stop();
+    const char* extensiones[] = { ".mp3", ".ogg", ".wav" };
+    QString carpeta = QCoreApplication::applicationDirPath() + "/musica/";
+    for (const char* extension : extensiones) {
+        if (QFile::exists(carpeta + nombre + extension)) {
+            reproductorMusica->setSource(QUrl::fromLocalFile(carpeta + nombre + extension));
+            reproductorMusica->play();
+            return;
+        }
+    }
+    for (const char* extension : extensiones) {
+        QString ruta = ":/sonidos/musica_" + nombre + extension;
+        if (QFile::exists(ruta)) {
+            reproductorMusica->setSource(QUrl("qrc" + ruta));
+            reproductorMusica->play();
+            return;
+        }
+    }
+}
+
+void Sonido::detenerMusica()
+{
+    musicaActual = "";
+    reproductorMusica->stop();
+}
+
+void Sonido::efecto(const QString& nombre)
+{
+    auto encontrado = efectos.find(nombre);
+    if (encontrado != efectos.end()) {
+        encontrado->second->play();
+    }
+}
+
+void Sonido::voz(const QString& nombre)
+{
+    reproductorVoz->stop();
+    reproductorVoz->setSource(QUrl("qrc:/sonidos/" + nombre + ".mp3"));
+    reproductorVoz->play();
+}

@@ -1,0 +1,9 @@
+# Carpetas de compilacion (Qt Creator / CMake)
+build/
+build-*/
+*.user
+CMakeLists.txt.user*
+.qtcreator/
+
+# Python
+__pycache__/
