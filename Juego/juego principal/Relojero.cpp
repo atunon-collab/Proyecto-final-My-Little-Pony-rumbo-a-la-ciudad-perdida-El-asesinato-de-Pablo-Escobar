@@ -1,7 +1,6 @@
 #include "Relojero.h"
 #include <QRandomGenerator>
 #include <QtMath>
-#include <vector>
 
 const double PERIODO_DECISION = 0.25;
 const double TIEMPO_OBSERVACION = 1.5;
@@ -96,22 +95,24 @@ Situacion Relojero::percibir(const DatosNivel& datos) const
 
 Accion Relojero::decidir(Situacion situacion, const DatosNivel& datos)
 {
-    std::vector<Accion> validas;
+    // Arreglo fijo: nunca hay mas de NUM_ACCIONES acciones validas
+    Accion validas[NUM_ACCIONES];
+    int cantidad = 0;
     for (int i = 0; i < NUM_ACCIONES; i++) {
         if (esperas[i] <= 0 && datos.disponible[i]) {
-            validas.push_back(Accion(i));
+            validas[cantidad++] = Accion(i);
         }
     }
-    if (validas.empty()) {
+    if (cantidad == 0) {
         return OBSERVAR;
     }
     if (QRandomGenerator::global()->generateDouble() < memoria->epsilon) {
-        return validas[QRandomGenerator::global()->bounded(int(validas.size()))];
+        return validas[QRandomGenerator::global()->bounded(cantidad)];
     }
     Accion mejor = validas[0];
-    for (Accion a : validas) {
-        if (memoria->tablaQ[situacion][a] > memoria->tablaQ[situacion][mejor]) {
-            mejor = a;
+    for (int i = 1; i < cantidad; i++) {
+        if (memoria->tablaQ[situacion][validas[i]] > memoria->tablaQ[situacion][mejor]) {
+            mejor = validas[i];
         }
     }
     return mejor;
