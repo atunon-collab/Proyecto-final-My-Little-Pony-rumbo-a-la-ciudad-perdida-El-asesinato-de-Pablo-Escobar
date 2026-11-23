@@ -78,8 +78,12 @@ void Escena::actualizar(double dt)
     }
     const QString& texto = datos.lineas[linea].texto;
     if (letrasVisibles < texto.size()) {
+        int antes = int(letrasVisibles);
         letrasVisibles += 55 * dt;
-        textoDialogo->setPlainText(texto.left(int(letrasVisibles)));
+        // setPlainText rehace todo el documento del texto: solo cuando aparece una letra nueva
+        if (int(letrasVisibles) != antes) {
+            textoDialogo->setPlainText(texto.left(int(letrasVisibles)));
+        }
     }
     if (destello > 0) {
         destello -= dt * 1.5;

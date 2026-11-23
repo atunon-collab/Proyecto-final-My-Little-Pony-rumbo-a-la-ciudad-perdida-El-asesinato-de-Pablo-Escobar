@@ -12,6 +12,7 @@
 #include "Estilo.h"
 #include <QRandomGenerator>
 #include <QtMath>
+#include <algorithm>
 
 const double ANCHO_MEDELLIN = 3072;
 const double ALTO_MEDELLIN = 2048;
@@ -46,7 +47,8 @@ static double largo(QPointF v)
 
 NivelMedellin::NivelMedellin(Juego* juego, MemoriaRelojero* memoria)
     : Nivel(juego, ANCHO_MEDELLIN, ALTO_MEDELLIN), twilight(nullptr), relojero(nullptr), portal(nullptr), recogidas(0),
-      analizadas(0), tiempoRestante(0), entroPortal(false), granadaPendiente(0), tiempoFlecha(0), tiempoAyuda(9)
+      analizadas(0), tiempoRestante(0), entroPortal(false), granadaPendiente(0), tiempoFlecha(0), tiempoAyuda(9),
+      hudSegundos(-1), hudRecogidas(-1), hudPorAnalizar(-1)
 {
     cargar(memoria);
 }
@@ -294,6 +296,7 @@ void NivelMedellin::moverTwilight(double dt)
     for (Techo* techo : techos) {
         if (techo->getRect().adjusted(45, 45, -45, -15).contains(twilight->pos())) {
             ultimoSeguro = twilight->pos();
+            break;
         }
     }
 }
@@ -335,6 +338,16 @@ void NivelMedellin::revisarColisiones(double dt)
             }
         }
     }
+
+    // Las anomalias de las pruebas ya recogidas se borran: antes se seguian moviendo invisibles en cada cuadro
+    auto fin = std::remove_if(anomalias.begin(), anomalias.end(), [](const AnomaliaDePrueba& registro) {
+        if (registro.anomalia->estaActiva()) {
+            return false;
+        }
+        delete registro.anomalia;
+        return true;
+    });
+    anomalias.erase(fin, anomalias.end());
 
     for (Item* cristal : cristales) {
         if (cristal->estaActiva() && enElPiso && twilight->colisionaCon(cristal)) {
@@ -527,7 +540,9 @@ void NivelMedellin::actualizar(double dt)
         twilight->actualizar(dt);
         portal->actualizar(dt);
         for (Prueba* prueba : pruebas) {
-            prueba->actualizar(dt);
+            if (!recogida[prueba->getIndice()]) {
+                prueba->actualizar(dt);
+            }
         }
         for (Item* cristal : cristales) {
             cristal->actualizar(dt);
@@ -556,9 +571,20 @@ void NivelMedellin::actualizarHud()
 {
     mostrarCorazones(twilight->getVida());
     barraMagia->setRect(0, 0, 230 * twilight->magia / 100.0, 12);
+    // Los textos solo se arman de nuevo cuando cambia el numero (el reloj cambia una vez por segundo, no 60)
     int segundos = qMax(0, int(tiempoRestante));
-    textoTiempo->setTexto(QString::number(segundos / 60) + ":" + QString("%1").arg(segundos % 60, 2, 10, QChar('0')));
-    textoTiempo->setColor(tiempoRestante < 25 ? QColor(255, 80, 80) : QColor(Qt::white));
-    textoPruebas->setTexto("Pruebas " + QString::number(recogidas) + "/4");
-    textoAnalizar->setTexto(porAnalizar.empty() ? "" : "Q: " + QString::number(porAnalizar.size()) + " por analizar");
+    if (segundos != hudSegundos) {
+        hudSegundos = segundos;
+        textoTiempo->setTexto(QString::number(segundos / 60) + ":" + QString("%1").arg(segundos % 60, 2, 10, QChar('0')));
+        textoTiempo->setColor(tiempoRestante < 25 ? QColor(255, 80, 80) : QColor(Qt::white));
+    }
+    if (recogidas != hudRecogidas) {
+        hudRecogidas = recogidas;
+        textoPruebas->setTexto("Pruebas " + QString::number(recogidas) + "/4");
+    }
+    int pendientes = int(porAnalizar.size());
+    if (pendientes != hudPorAnalizar) {
+        hudPorAnalizar = pendientes;
+        textoAnalizar->setTexto(pendientes == 0 ? "" : "Q: " + QString::number(pendientes) + " por analizar");
+    }
 }
