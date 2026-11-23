@@ -51,6 +51,19 @@ QPixmap cargarImagen(const QString& ruta, int ancho, int alto)
     return imagen;
 }
 
+QPixmap cargarImagenAlto(const QString& ruta, int alto)
+{
+    // Para las texturas de las plataformas: pocas imagenes y pocas alturas que se repiten mucho
+    QString clave = ruta + "@alto" + QString::number(alto);
+    auto encontrada = imagenesCargadas.find(clave);
+    if (encontrada != imagenesCargadas.end()) {
+        return encontrada->second;
+    }
+    QPixmap imagen = cargarImagen(ruta).scaledToHeight(alto, Qt::SmoothTransformation);
+    imagenesCargadas[clave] = imagen;
+    return imagen;
+}
+
 void cargarTira(const QString& archivo, double escala, std::vector<QPixmap>& derecha, std::vector<QPixmap>& izquierda)
 {
     QString clave = archivo + "@" + QString::number(escala);
