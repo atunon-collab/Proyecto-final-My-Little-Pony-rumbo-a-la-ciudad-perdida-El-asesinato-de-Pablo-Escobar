@@ -38,6 +38,7 @@ QFont fuenteTitulo(int pixeles)
 }
 
 TextoBorde::TextoBorde(const QString& texto, const QFont& fuente, const QColor& color, double grosor)
+    : margen(grosor + 1)
 {
     setFont(fuente);
     setText(texto);
@@ -47,6 +48,14 @@ TextoBorde::TextoBorde(const QString& texto, const QFont& fuente, const QColor& 
     relleno->setFont(fuente);
     relleno->setBrush(color);
     relleno->setPen(Qt::NoPen);
+    // El contorno grueso es caro de trazar: Qt lo guarda como imagen y solo lo redibuja si cambia el texto
+    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+}
+
+QRectF TextoBorde::boundingRect() const
+{
+    // El contorno sale "grosor" pixeles por fuera de las letras; sin este margen la imagen guardada lo recorta
+    return QGraphicsSimpleTextItem::boundingRect().adjusted(-margen, -margen, margen, margen);
 }
 
 void TextoBorde::setTexto(const QString& texto)

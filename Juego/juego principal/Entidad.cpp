@@ -4,17 +4,23 @@
 #include <QBrush>
 
 Entidad::Entidad()
-    : activa(true), cuadro(0), tiempoCuadro(0), haciaDerecha(true), desdePies(true), altura(0)
+    : activa(true), actual(nullptr), cuadro(0), tiempoCuadro(0), haciaDerecha(true), desdePies(true), altura(0)
 {
     caja = new QGraphicsRectItem(this);
     caja->setPen(Qt::NoPen);
     caja->setBrush(Qt::NoBrush);
+    // La caja es invisible: asi Qt no la tiene en cuenta al pintar
+    caja->setFlag(QGraphicsItem::ItemHasNoContents);
 }
 
 bool Entidad::colisionaCon(const Entidad* otra) const
 {
     if (otra == nullptr || !otra->activa || !activa) {
         return false;
+    }
+    // Sin rotacion las dos cajas son rectangulos rectos y basta con ver si se cruzan
+    if (rotation() == 0 && otra->rotation() == 0) {
+        return getCaja().intersects(otra->getCaja());
     }
     return caja->collidesWithItem(otra->caja);
 }
@@ -58,10 +64,16 @@ void Entidad::ponerImagen(const QPixmap& imagen, bool desdePies)
 
 void Entidad::ponerAnimacion(const QString& nombre)
 {
-    if (nombre == animacionActual || animaciones.find(nombre) == animaciones.end()) {
+    if (nombre == animacionActual) {
+        return;
+    }
+    auto encontrada = animaciones.find(nombre);
+    if (encontrada == animaciones.end()) {
         return;
     }
     animacionActual = nombre;
+    // Se guarda la animacion para no buscarla por nombre en cada cuadro
+    actual = &encontrada->second;
     cuadro = 0;
     tiempoCuadro = 0;
     mostrarCuadro();
@@ -70,15 +82,14 @@ void Entidad::ponerAnimacion(const QString& nombre)
 void Entidad::avanzarAnimacion(double dt)
 {
     tiempoCuadro += dt;
-    if (tiempoCuadro < DURACION_CUADRO) {
+    if (tiempoCuadro < DURACION_CUADRO || actual == nullptr) {
         return;
     }
     tiempoCuadro = 0;
-    Animacion& animacion = animaciones[animacionActual];
-    int total = int(animacion.derecha.size());
+    int total = int(actual->derecha.size());
     if (cuadro + 1 < total) {
         cuadro++;
-    } else if (animacion.repetir) {
+    } else if (actual->repetir) {
         cuadro = 0;
     }
     mostrarCuadro();
@@ -108,9 +119,14 @@ void Entidad::crearSombra(double ancho)
 
 void Entidad::mostrarCuadro()
 {
-    Animacion& animacion = animaciones[animacionActual];
-    const QPixmap& imagen = haciaDerecha ? animacion.derecha[cuadro] : animacion.izquierda[cuadro];
-    setPixmap(imagen);
+    if (actual == nullptr) {
+        return;
+    }
+    const QPixmap& imagen = haciaDerecha ? actual->derecha[cuadro] : actual->izquierda[cuadro];
+    // setPixmap siempre recalcula y repinta; si es la misma imagen (cuadro repetido o solo cambio la altura) se evita
+    if (pixmap().cacheKey() != imagen.cacheKey()) {
+        setPixmap(imagen);
+    }
     if (desdePies) {
         setOffset(-imagen.width() / 2.0, -imagen.height() - altura);
     } else {

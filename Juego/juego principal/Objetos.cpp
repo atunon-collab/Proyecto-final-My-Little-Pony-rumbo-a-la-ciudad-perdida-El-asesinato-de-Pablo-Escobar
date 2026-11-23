@@ -3,6 +3,7 @@
 #include <QPen>
 #include <QBrush>
 #include <QtMath>
+#include <cmath>
 
 Plataforma::Plataforma(double x, double y, double ancho, double alto, const QString& textura, TipoPlataforma tipo, double fase, double velocidad)
     : ancho(ancho), alto(alto), tipo(tipo), tiempo(0), solida(true), pisada(false), tiempoCaida(0), fase(fase),
@@ -18,8 +19,7 @@ Plataforma::Plataforma(double x, double y, double ancho, double alto, const QStr
         double borde = textura == "plat_piedra" ? 0.2 : 0.05;
         double total = alto / (1 - borde);
         double sobresale = total - alto;
-        QPixmap franja = cargarImagen(":/fondos/" + textura + ".png");
-        QBrush brocha(franja.scaledToHeight(int(total + 0.5), Qt::SmoothTransformation));
+        QBrush brocha(cargarImagenAlto(":/fondos/" + textura + ".png", int(total + 0.5)));
         brocha.setTransform(QTransform::fromTranslate(0, -sobresale));
         superficie->setRect(0, -sobresale, ancho, total);
         superficie->setBrush(brocha);
@@ -64,10 +64,8 @@ void Plataforma::actualizar(double dt)
         }
     } else if (tipo == PLAT_ECO) {
         double ciclo = 4.0 / velocidad;
-        double momento = tiempo + fase;
-        while (momento >= ciclo) {
-            momento -= ciclo;
-        }
+        // fmod da el resto en un solo paso; el bucle anterior daba mas vueltas cuanto mas se jugaba
+        double momento = std::fmod(tiempo + fase, ciclo);
         double visible = 2.5 / velocidad;
         solida = momento < visible;
         if (!solida) {

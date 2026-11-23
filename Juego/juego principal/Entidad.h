@@ -47,6 +47,7 @@ protected:
     QGraphicsRectItem* caja;
     std::map<QString, Animacion> animaciones;
     QString animacionActual;
+    Animacion* actual;
     int cuadro;
     double tiempoCuadro;
     bool haciaDerecha;

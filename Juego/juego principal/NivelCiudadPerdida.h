@@ -48,6 +48,7 @@ private:
     QPointF puntoControl;
     QPointF ultimoSeguro;
     double alturaMaxima;
+    int valorHud;
     TextoBorde* textoAltura;
 
     void cargar(MemoriaRelojero* memoria);
