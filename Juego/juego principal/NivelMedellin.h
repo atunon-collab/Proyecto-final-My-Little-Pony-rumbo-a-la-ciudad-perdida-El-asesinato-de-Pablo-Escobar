@@ -53,6 +53,9 @@ private:
     QPointF objetivoPendiente;
     double tiempoFlecha;
     double tiempoAyuda;
+    int hudSegundos;
+    int hudRecogidas;
+    int hudPorAnalizar;
 
     TextoBorde* textoTiempo;
     TextoBorde* textoPruebas;
