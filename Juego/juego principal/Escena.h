@@ -7,7 +7,6 @@
 #include <vector>
 
 const int EF_NADA = 0;
-const int EF_DESTELLO = 1;
 const int EF_APARECER = 2;
 const int EF_DESAPARECER = 3;
 const int EF_ANIMAR = 4;
@@ -62,12 +61,9 @@ private:
     DatosEscena datos;
     std::vector<Figura*> figuras;
     int linea;
-    double letrasVisibles;
-    double destello;
     TextoBorde* textoNombre;
     QGraphicsTextItem* textoDialogo;
     QGraphicsTextItem* textoAyuda;
-    QGraphicsRectItem* rectDestello;
 
     void empezarLinea();
 };
