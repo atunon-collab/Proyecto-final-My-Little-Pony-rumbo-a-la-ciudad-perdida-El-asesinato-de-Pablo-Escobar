@@ -199,7 +199,7 @@ void NivelCiudadPerdida::cargar(MemoriaRelojero* memoria)
 
     crearCorazones(3, true);
     textoAltura = crearPlacaDerecha("icono_flecha");
-    mostrarMensaje("¡Sube hasta el templo! E lanza manzanas · W liana · R lazo", 5);
+    mostrarMensaje("¡Sube hasta el templo! E lanza manzanas | W liana | R lazo", 5);
     moverCamara(aj->pos());
 }
 

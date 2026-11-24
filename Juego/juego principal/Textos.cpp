@@ -132,7 +132,7 @@ DatosEscena escenaCreditos(int puntaje)
     d.fondo = "titulo";
     d.musica = "victoria";
     d.lineas.push_back(linea("FIN", "Puntaje final: " + QString::number(puntaje) + " puntos. ¡Gracias por jugar!"));
-    d.lineas.push_back(linea("Créditos", "Rumbo a la Ciudad Perdida · Proyecto final de Informática II · Universidad de Antioquia."));
+    d.lineas.push_back(linea("Créditos", "Rumbo a la Ciudad Perdida | Proyecto final de Informática II | Universidad de Antioquia."));
     d.lineas.push_back(linea("Créditos", "Sprites: colección Desktop Ponies. Fondos y objetos generados con IA. Música: Red Velvet y pistas CC0. Efectos CC0."));
     return d;
 }
