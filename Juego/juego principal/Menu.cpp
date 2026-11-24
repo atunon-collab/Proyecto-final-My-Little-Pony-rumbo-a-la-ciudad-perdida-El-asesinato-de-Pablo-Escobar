@@ -5,7 +5,6 @@
 #include "Estilo.h"
 #include "Recursos.h"
 #include <QApplication>
-#include <QtMath>
 
 const int MENU_PRINCIPAL = 0;
 const int MENU_DIFICULTAD = 1;
@@ -17,7 +16,7 @@ static void centrar(TextoBorde* item, double y)
 }
 
 Menu::Menu(Juego* juego)
-    : Pantalla(juego), estado(MENU_PRINCIPAL), opcion(0), tiempo(0)
+    : Pantalla(juego), estado(MENU_PRINCIPAL), opcion(0)
 {
     agregarFondo("titulo");
 
@@ -37,7 +36,6 @@ Menu::Menu(Juego* juego)
     cursor = escena->addPixmap(cargarImagen(":/objetos/icono_flecha.png", 40, 30));
     cursor->setZValue(1001);
     descripcion = agregarTexto("", fuenteTexto(20), CREMA, 420, 522, 440);
-    advertencia = agregarTextoBorde("", fuenteTitulo(18), QColor(255, 60, 60), 0, 665, 3);
     textoControles = agregarTexto("", fuenteTexto(20), CREMA, 205, 335, 870);
     juego->getSonido()->musica("menu");
     mostrarPrincipal();
@@ -50,7 +48,6 @@ void Menu::limpiarOpciones()
     }
     opciones.clear();
     descripcion->setPlainText("");
-    advertencia->setTexto("");
     textoControles->setPlainText("");
 }
 
@@ -121,23 +118,6 @@ void Menu::resaltar()
             "Menos tiempo y menos ayuda. El Relojero aprende rápido y lanza ataques dobles."
         };
         descripcion->setPlainText(descripciones[opcion]);
-        advertencia->setTexto(opcion == 2 ? "¡NO ES PARA NOVATOS DE INFORMÁTICA II!" : "");
-        centrar(advertencia, 665);
-    }
-}
-
-void Menu::actualizar(double dt)
-{
-    tiempo += dt;
-    double flotar = 4 * qSin(tiempo * 2);
-    placaTitulo->setY(20 + flotar);
-    titulo1->setY(95 + flotar);
-    titulo2->setY(145 + flotar);
-    if (!opciones.empty()) {
-        cursor->setX(opciones[opcion]->x() - 55 + 5 * qSin(tiempo * 8));
-    }
-    if (estado == MENU_DIFICULTAD && opcion == 2) {
-        advertencia->setOpacity(int(tiempo * 4) % 2 == 0 ? 1.0 : 0.55);
     }
 }
 
