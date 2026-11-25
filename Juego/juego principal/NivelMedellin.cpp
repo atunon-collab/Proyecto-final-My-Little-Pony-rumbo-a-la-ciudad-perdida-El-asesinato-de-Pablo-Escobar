@@ -83,14 +83,6 @@ void NivelMedellin::cargar(MemoriaRelojero* memoria)
         agregarEntidad(obstaculo);
         obstaculos.push_back(obstaculo);
     }
-    struct Adorno { const char* imagen; double x, y, tamano; };
-    Adorno adornos[] = {
-        { "macetas", 400, 1180, 60 }, { "caneca", 2700, 1420, 40 }, { "ladrillos", 820, 1420, 50 },
-        { "satelite", 2420, 600, 55 }, { "matera", 1150, 1480, 40 }, { "ropa", 1700, 1900, 80 }
-    };
-    for (const Adorno& a : adornos) {
-        agregarEntidad(new ObjetoFijo(OBJ_DECORADO, a.imagen, QPointF(a.x, a.y), a.tamano, a.tamano));
-    }
 
     QPointF posicionesPruebas[] = { QPointF(720, 1300), QPointF(1720, 1820), QPointF(1745, 240), QPointF(2850, 1780) };
     for (int i = 0; i < 4; i++) {
