@@ -37,7 +37,7 @@ Menu::Menu(Juego* juego)
     cursor->setZValue(1001);
     descripcion = agregarTexto("", fuenteTexto(20), CREMA, 420, 522, 440);
     textoControles = agregarTexto("", fuenteTexto(20), CREMA, 205, 335, 870);
-    juego->getSonido()->musica("menu");
+    juego->getSonido()->musica("medellin");
     mostrarPrincipal();
 }
 
@@ -133,16 +133,13 @@ void Menu::teclaPresionada(int tecla)
     int cantidad = int(opciones.size());
     if (tecla == Qt::Key_W) {
         opcion = (opcion + cantidad - 1) % cantidad;
-        juego->getSonido()->efecto("seleccion");
         resaltar();
     } else if (tecla == Qt::Key_S) {
         opcion = (opcion + 1) % cantidad;
-        juego->getSonido()->efecto("seleccion");
         resaltar();
     } else if (tecla == Qt::Key_Escape && estado == MENU_DIFICULTAD) {
         mostrarPrincipal();
     } else if (tecla == Qt::Key_Return) {
-        juego->getSonido()->efecto("seleccion");
         if (estado == MENU_PRINCIPAL) {
             if (opcion == 0) {
                 mostrarDificultad();

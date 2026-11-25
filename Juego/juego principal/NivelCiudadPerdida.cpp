@@ -215,11 +215,9 @@ void NivelCiudadPerdida::teclaPresionada(int tecla)
             aj->soltarse();
             aj->movimiento.lanzar(aj->pos(), v.x() * 1.25, qMin(v.y() * 1.25, 0.0) - IMPULSO_SOLTAR);
             aj->enSuelo = false;
-            juego->getSonido()->efecto("salto");
         } else if (aj->enSuelo) {
             aj->movimiento.setVy(-VELOCIDAD_SALTO);
             aj->enSuelo = false;
-            juego->getSonido()->efecto("salto");
         }
     } else if (tecla == Qt::Key_E && aj->puedeLanzar()) {
         lanzarManzana();
@@ -227,7 +225,6 @@ void NivelCiudadPerdida::teclaPresionada(int tecla)
         for (ObjetoFijo* gancho : ganchos) {
             if (gancho->y() < aj->y() - 60 && distancia(gancho->pos(), aj->pos()) < 340) {
                 aj->lanzarLazo(gancho->pos(), aj->x() < gancho->x());
-                juego->getSonido()->efecto("patada");
                 break;
             }
         }
@@ -241,7 +238,6 @@ void NivelCiudadPerdida::lanzarManzana()
     agregarEntidad(manzana);
     tiros.push_back(manzana);
     aj->lanzar();
-    juego->getSonido()->efecto("patada");
 }
 
 void NivelCiudadPerdida::moverApplejack(double dt)
@@ -305,7 +301,6 @@ void NivelCiudadPerdida::actualizarTiros(double dt)
                 manzana->desactivar();
                 crearEfecto("efecto_polvo", muro->pos() + QPointF(0, -100), 90, 0.5, 1.6);
                 if (muro->golpear()) {
-                    juego->getSonido()->efecto("romper");
                     mostrarMensaje("¡El muro se rompió!", 1.5);
                 }
             }
@@ -326,7 +321,6 @@ void NivelCiudadPerdida::actualizarTiros(double dt)
             if (maneiac->estaVencida()) {
                 escalera->setHabilitada(true);
                 mostrarMensaje("¡Mane-iac fue vencida! Se abrió la escalera", 3);
-                juego->getSonido()->voz("aj_tarnation");
             }
         }
         if (manzana->estaActiva() && faseJefe && !relojero->esInvulnerable() && manzana->colisionaCon(relojero)) {
@@ -335,7 +329,7 @@ void NivelCiudadPerdida::actualizarTiros(double dt)
             relojero->recibirDanio(1);
             relojero->hacerInvulnerable(1.5);
             crearEfecto("efecto_explosion", relojero->pos() + QPointF(0, -45), 130, 0.6, 1.5);
-            juego->getSonido()->efecto("explosion");
+            juego->getSonido()->efecto("golpe");
             mostrarMensaje("¡Golpe al Relojero! " + QString::number(golpesAlRelojero) + "/3", 2);
         }
     }
@@ -511,7 +505,6 @@ void NivelCiudadPerdida::ejecutarAccion(Accion accion)
         Proyectil* roca = new Proyectil("roca", 46, relojero->pos() + QPointF(0, -20), objetivo, config.rapidezProyectil);
         agregarEntidad(roca);
         rocas.push_back(roca);
-        juego->getSonido()->efecto("patada");
         relojero->activarEspera(PROYECTIL, faseJefe ? config.esperaProyectil : config.intervaloRocas);
     } else if (accion == OBSTACULO) {
         TrampaColgante* cercana = nullptr;
@@ -545,7 +538,6 @@ void NivelCiudadPerdida::ejecutarAccion(Accion accion)
             perchaActual = mejor;
             relojero->teletransportar(perchas[mejor]);
         }
-        juego->getSonido()->efecto("teleport");
         relojero->activarEspera(TELETRANSPORTE, 4.0);
     }
 }
@@ -561,7 +553,6 @@ void NivelCiudadPerdida::empezarJefe()
     trampas.push_back(hacha1);
     trampas.push_back(hacha2);
     mostrarMensaje("¡Lánzale manzanas al Relojero!", 4);
-    juego->getSonido()->musica("jefe");
 }
 
 void NivelCiudadPerdida::actualizar(double dt)

@@ -28,7 +28,6 @@ struct LineaDialogo
     QString texto;
     int efecto;
     int actor;
-    QString voz;
 };
 
 struct DatosEscena
