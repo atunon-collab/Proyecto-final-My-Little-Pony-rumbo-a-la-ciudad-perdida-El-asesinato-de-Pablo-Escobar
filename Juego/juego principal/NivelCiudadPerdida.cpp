@@ -269,14 +269,12 @@ void NivelCiudadPerdida::actualizarTiros(double dt)
         QRectF caja = manzana->getCaja();
         for (Plataforma* p : plataformas) {
             if (manzana->estaActiva() && p->esSolida() && caja.intersects(p->getRect())) {
-                crearEfecto("efecto_polvo", manzana->pos(), 40, 0.3, 1.5);
                 manzana->desactivar();
             }
         }
         for (ObjetoFijo* muro : muros) {
             if (manzana->estaActiva() && manzana->colisionaCon(muro)) {
                 manzana->desactivar();
-                crearEfecto("efecto_polvo", muro->pos() + QPointF(0, -100), 90, 0.5, 1.6);
                 if (muro->golpear()) {
                     mostrarMensaje("¡El muro se rompió!", 1.5);
                 }
@@ -391,7 +389,6 @@ void NivelCiudadPerdida::revisarColisiones()
     for (ObjetoFijo* totem : totems) {
         if (!totem->estaEncendido() && aj->colisionaCon(totem)) {
             totem->encender();
-            crearEfecto("efecto_aura", totem->pos() + QPointF(0, -20), 110, 0.9, 1.5);
             puntoControl = totem->pos();
             aj->setVida(aj->getVidaMax());
             juego->getSonido()->efecto("recoger");
@@ -401,7 +398,6 @@ void NivelCiudadPerdida::revisarColisiones()
     for (Item* manzana : manzanas) {
         if (manzana->estaActiva() && aj->colisionaCon(manzana)) {
             aj->curar(1);
-            crearEfecto("efecto_brillo", manzana->pos() + QPointF(0, -25), 55, 0.5, 2.0);
             manzana->desactivar();
             juego->getSonido()->efecto("recoger");
         }
@@ -436,9 +432,7 @@ void NivelCiudadPerdida::actualizarRelojero(double dt)
         }
         if (mejor != perchaActual) {
             perchaActual = mejor;
-            crearEfecto("efecto_teleport", relojero->pos() + QPointF(0, -40), 90, 0.45, 1.4);
             relojero->teletransportar(perchas[mejor]);
-            crearEfecto("efecto_teleport", perchas[mejor] + QPointF(0, -40), 90, 0.45, 1.4);
         }
     }
 

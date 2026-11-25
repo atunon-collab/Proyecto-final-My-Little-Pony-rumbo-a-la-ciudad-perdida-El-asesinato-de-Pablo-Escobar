@@ -197,8 +197,6 @@ void NivelMedellin::teletransportar(QPointF direccion)
         return;
     }
     twilight->terminarTeletransporte();
-    crearEfecto("efecto_teleport", antes + QPointF(0, -40), 90, 0.45, 1.4);
-    crearEfecto("efecto_teleport", destino + QPointF(0, -40), 90, 0.45, 1.4);
 }
 
 bool NivelMedellin::sobreTecho(Entidad* entidad) const
@@ -273,7 +271,6 @@ void NivelMedellin::moverTwilight(double dt)
         return;
     }
     if (!sobreTecho(twilight)) {
-        crearEfecto("efecto_polvo", twilight->pos(), 90, 0.5, 1.8);
         twilight->setVida(twilight->getVida() - 1);
         twilight->hacerInvulnerable(1.5);
         twilight->setPos(ultimoSeguro);
@@ -313,7 +310,6 @@ void NivelMedellin::revisarColisiones(double dt)
             recogidas++;
             porAnalizar.push_back(i);
             prueba->setVisible(false);
-            crearEfecto("efecto_brillo", prueba->pos() + QPointF(0, -30), 70, 0.6, 2.0);
             juego->getSonido()->efecto("recoger");
             mostrarMensaje("Prueba recogida: " + nombrePrueba(i) + "  (Q para analizarla)", 3);
             for (AnomaliaDePrueba& registro : anomalias) {
@@ -343,7 +339,6 @@ void NivelMedellin::revisarColisiones(double dt)
         if (cristal->estaActiva() && enElPiso && twilight->colisionaCon(cristal)) {
             twilight->magia = qMin(100.0, twilight->magia + 40);
             cristal->desactivar();
-            crearEfecto("efecto_brillo", cristal->pos() + QPointF(0, -25), 55, 0.5, 2.0);
             juego->getSonido()->efecto("recoger");
         }
     }
@@ -480,9 +475,7 @@ void NivelMedellin::ejecutarAccion(Accion accion)
             QPointF destino(azar(d.x + 30, d.x + d.ancho - 30), azar(d.y + 40, d.y + d.alto - 20));
             double distancia = largo(destino - twilight->pos());
             if (distancia > 350 && distancia < 700 && posicionValidaRelojero(destino)) {
-                crearEfecto("efecto_teleport", relojero->pos() + QPointF(0, -40), 90, 0.45, 1.4);
                 relojero->teletransportar(destino);
-                crearEfecto("efecto_teleport", destino + QPointF(0, -40), 90, 0.45, 1.4);
                 break;
             }
         }
