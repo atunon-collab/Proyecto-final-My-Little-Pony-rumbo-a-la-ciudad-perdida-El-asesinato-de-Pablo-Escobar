@@ -56,9 +56,6 @@ void Escena::empezarLinea()
             figura->animando = true;
         }
     }
-    if (!actual.voz.isEmpty()) {
-        juego->getSonido()->voz(actual.voz);
-    }
 }
 
 void Escena::actualizar(double dt)

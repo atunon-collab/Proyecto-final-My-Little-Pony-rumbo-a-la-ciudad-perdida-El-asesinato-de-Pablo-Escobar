@@ -13,14 +13,13 @@ static Actor actor(const QString& sprite, double x, double y, bool derecha, bool
     return a;
 }
 
-static LineaDialogo linea(const QString& hablante, const QString& texto, int efecto = EF_NADA, int actorIndice = -1, const QString& voz = "")
+static LineaDialogo linea(const QString& hablante, const QString& texto, int efecto = EF_NADA, int actorIndice = -1)
 {
     LineaDialogo l;
     l.hablante = hablante;
     l.texto = texto;
     l.efecto = efecto;
     l.actor = actorIndice;
-    l.voz = voz;
     return l;
 }
 
@@ -55,7 +54,7 @@ DatosEscena escenaIntro()
     d.lineas.push_back(linea("Narrador", "Pero el disparo definitivo no salió de la policía.", EF_ANIMAR, 6));
     d.lineas.push_back(linea("Narrador", "Salió de una pistola que no debería existir en 1993.", EF_APARECER, 7));
     d.lineas.push_back(linea("Rainbow Dash", "¡¿Qué fue ese rayo azul?! ¡Eso no era una pistola normal!"));
-    d.lineas.push_back(linea("Twilight Sparkle", "Energía cuántica... ¡Alguien vino de otra época y cambió la historia!", EF_NADA, -1, "twilight_oh_no"));
+    d.lineas.push_back(linea("Twilight Sparkle", "Energía cuántica... ¡Alguien vino de otra época y cambió la historia!"));
     d.lineas.push_back(linea("???", "Llegan tarde, ponis. Esta historia ahora me pertenece."));
     d.lineas.push_back(linea("Fluttershy", "Lleva... ¿un reloj de arena gigante?"));
     d.lineas.push_back(linea("Twilight Sparkle", "¡Es un viajero del tiempo! Abrió un portal en el último tejado y se está cerrando."));
@@ -76,7 +75,7 @@ DatosEscena escenaCaptura()
     d.actores.push_back(actor("caballeron_quieto", 1100, SUELO_MEDELLIN, false, false));
     d.actores.push_back(actor("trixie_quieta", 1210, SUELO_MEDELLIN, false, false));
     d.lineas.push_back(linea("Narrador", "Twilight llega al portal justo a tiempo y se teletransporta encima del Relojero."));
-    d.lineas.push_back(linea("El Relojero", "¡Suéltame! ¡Mi pistola!", EF_NADA, -1, "relojero_dejame"));
+    d.lineas.push_back(linea("El Relojero", "¡Suéltame! ¡Mi pistola!"));
     d.lineas.push_back(linea("Narrador", "La pistola temporal cae al tejado. Sin ella, el portal se vuelve inestable... y colapsa."));
     d.lineas.push_back(linea("El Relojero", "¡No! ¡NO! ...Esto no ha terminado, Twilight Sparkle. Todavía tengo mi reloj."));
     d.lineas.push_back(linea("Narrador", "Con su reloj de muñeca, el Relojero salta de tejado en tejado y desaparece en la noche.", EF_DESAPARECER, 6));
@@ -103,7 +102,7 @@ DatosEscena escenaViajeSierra()
     d.lineas.push_back(linea("Applejack", "Entonces subo yo. Ningún reloj parlante va a romper mi mundo."));
     d.lineas.push_back(linea("Fluttershy", "Los animales dicen que hay ponis extraños patrullando las terrazas... y una poni con mucho, mucho cabello."));
     d.lineas.push_back(linea("Rainbow Dash", "¡Mane-iac! El Relojero contrató a la peor villana de todas."));
-    d.lineas.push_back(linea("Applejack", "Que se prepare. ¡Yeehaw!", EF_NADA, -1, "aj_yeehaw"));
+    d.lineas.push_back(linea("Applejack", "Que se prepare. ¡Yeehaw!"));
     return d;
 }
 
@@ -111,7 +110,7 @@ DatosEscena escenaFinal()
 {
     DatosEscena d;
     d.fondo = "escena_templo";
-    d.musica = "victoria";
+    d.musica = "intro";
     agregarManeSix(d.actores, 40, SUELO_TEMPLO);
     d.actores.push_back(actor("relojero_quieto", 1000, SUELO_TEMPLO, false));
     d.lineas.push_back(linea("Narrador", "La última roca atraviesa el escudo y el Relojero cae de rodillas."));
@@ -130,7 +129,7 @@ DatosEscena escenaCreditos(int puntaje)
 {
     DatosEscena d;
     d.fondo = "titulo";
-    d.musica = "victoria";
+    d.musica = "intro";
     d.lineas.push_back(linea("FIN", "Puntaje final: " + QString::number(puntaje) + " puntos. ¡Gracias por jugar!"));
     d.lineas.push_back(linea("Créditos", "Rumbo a la Ciudad Perdida | Proyecto final de Informática II | Universidad de Antioquia."));
     d.lineas.push_back(linea("Créditos", "Sprites: colección Desktop Ponies. Fondos y objetos generados con IA. Música: Red Velvet y pistas CC0. Efectos CC0."));

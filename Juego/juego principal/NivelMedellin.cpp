@@ -170,7 +170,6 @@ void NivelMedellin::teclaPresionada(int tecla)
     if (tecla == Qt::Key_Space) {
         if (!twilight->estaEnElAire() && twilight->congelada <= 0) {
             twilight->saltar();
-            juego->getSonido()->efecto("salto");
         }
     } else if (tecla == Qt::Key_E) {
         if (twilight->puedeTeletransportarse()) {
@@ -206,7 +205,6 @@ void NivelMedellin::teletransportar(QPointF direccion)
         return;
     }
     twilight->terminarTeletransporte();
-    juego->getSonido()->efecto("teleport");
     crearEfecto("efecto_teleport", antes + QPointF(0, -40), 90, 0.45, 1.4);
     crearEfecto("efecto_teleport", destino + QPointF(0, -40), 90, 0.45, 1.4);
 }
@@ -463,7 +461,6 @@ void NivelMedellin::ejecutarAccion(Accion accion)
     } else if (accion == PROYECTIL) {
         relojero->lanzarHechizo();
         lanzarGranada(twilight->pos());
-        juego->getSonido()->efecto("salto");
         if (config.proyectilDoble) {
             granadaPendiente = 0.35;
             objetivoPendiente = twilight->pos() + QPointF(azar(-70, 70), azar(-70, 70));
@@ -494,7 +491,6 @@ void NivelMedellin::ejecutarAccion(Accion accion)
                 crearEfecto("efecto_teleport", relojero->pos() + QPointF(0, -40), 90, 0.45, 1.4);
                 relojero->teletransportar(destino);
                 crearEfecto("efecto_teleport", destino + QPointF(0, -40), 90, 0.45, 1.4);
-                juego->getSonido()->efecto("teleport");
                 break;
             }
         }
