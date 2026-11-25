@@ -85,29 +85,6 @@ void NivelCiudadPerdida::cargar(MemoriaRelojero* memoria)
     escalera = agregarPlataforma(400, 1800, 240, 30, "plat_piedra");
     escalera->setHabilitada(false);
 
-    struct Adorno { const char* imagen; double x, y, ancho, alto; };
-    Adorno adornos[] = {
-        { "helecho", 60, 3560, 110, 80 }, { "bambu", 1230, 3560, 80, 100 }, { "pena", 250, 3560, 80, 52 },
-        { "heliconia", 370, 3440, 70, 66 }, { "columna", 870, 3320, 54, 76 }, { "bromelia", 1210, 3200, 70, 56 },
-        { "helecho", 60, 2840, 90, 64 }, { "idolo", 1215, 2880, 50, 76 }, { "bromelia", 360, 2640, 60, 48 },
-        { "heliconia", 880, 2280, 60, 56 }, { "helecho", 1215, 2160, 80, 58 }, { "antorcha", 30, 1920, 40, 100 },
-        { "antorcha", 1250, 1920, 40, 100 }, { "idolo", 1050, 1920, 54, 82 }, { "columna", 680, 1560, 54, 76 },
-        { "bambu", 60, 960, 70, 90 }, { "pena", 1210, 1320, 70, 46 }, { "antorcha", 460, Y_TEMPLO, 40, 100 },
-        { "antorcha", 820, Y_TEMPLO, 40, 100 }, { "idolo", 120, Y_CIMA, 60, 92 }, { "idolo", 1180, Y_CIMA, 60, 92 },
-        { "heliconia", 40, Y_CIMA, 70, 66 }
-    };
-    for (const Adorno& a : adornos) {
-        ObjetoFijo* adorno = new ObjetoFijo(OBJ_DECORADO, a.imagen, QPointF(a.x, a.y), a.ancho, a.alto);
-        adorno->setZValue(6);
-        agregarEntidad(adorno);
-    }
-    QPointF enredaderas[] = { QPointF(180, 2915), QPointF(1090, 3275), QPointF(460, 2715), QPointF(720, 2115), QPointF(180, 1755) };
-    for (const QPointF& p : enredaderas) {
-        ObjetoFijo* enredadera = new ObjetoFijo(OBJ_DECORADO, "enredadera", p, 80, 90, false);
-        enredadera->setZValue(4);
-        agregarEntidad(enredadera);
-    }
-
     ObjetoFijo* muro = new ObjetoFijo(OBJ_MURO, "muro", QPointF(430, 2960), 84, 200);
     agregarEntidad(muro);
     muros.push_back(muro);
@@ -292,14 +269,12 @@ void NivelCiudadPerdida::actualizarTiros(double dt)
         QRectF caja = manzana->getCaja();
         for (Plataforma* p : plataformas) {
             if (manzana->estaActiva() && p->esSolida() && caja.intersects(p->getRect())) {
-                crearEfecto("efecto_polvo", manzana->pos(), 40, 0.3, 1.5);
                 manzana->desactivar();
             }
         }
         for (ObjetoFijo* muro : muros) {
             if (manzana->estaActiva() && manzana->colisionaCon(muro)) {
                 manzana->desactivar();
-                crearEfecto("efecto_polvo", muro->pos() + QPointF(0, -100), 90, 0.5, 1.6);
                 if (muro->golpear()) {
                     mostrarMensaje("¡El muro se rompió!", 1.5);
                 }
@@ -414,7 +389,6 @@ void NivelCiudadPerdida::revisarColisiones()
     for (ObjetoFijo* totem : totems) {
         if (!totem->estaEncendido() && aj->colisionaCon(totem)) {
             totem->encender();
-            crearEfecto("efecto_aura", totem->pos() + QPointF(0, -20), 110, 0.9, 1.5);
             puntoControl = totem->pos();
             aj->setVida(aj->getVidaMax());
             juego->getSonido()->efecto("recoger");
@@ -424,7 +398,6 @@ void NivelCiudadPerdida::revisarColisiones()
     for (Item* manzana : manzanas) {
         if (manzana->estaActiva() && aj->colisionaCon(manzana)) {
             aj->curar(1);
-            crearEfecto("efecto_brillo", manzana->pos() + QPointF(0, -25), 55, 0.5, 2.0);
             manzana->desactivar();
             juego->getSonido()->efecto("recoger");
         }
@@ -459,9 +432,7 @@ void NivelCiudadPerdida::actualizarRelojero(double dt)
         }
         if (mejor != perchaActual) {
             perchaActual = mejor;
-            crearEfecto("efecto_teleport", relojero->pos() + QPointF(0, -40), 90, 0.45, 1.4);
             relojero->teletransportar(perchas[mejor]);
-            crearEfecto("efecto_teleport", perchas[mejor] + QPointF(0, -40), 90, 0.45, 1.4);
         }
     }
 
@@ -571,9 +542,6 @@ void NivelCiudadPerdida::actualizar(double dt)
         }
         for (Patrullero* secuaz : secuaces) {
             secuaz->actualizar(dt);
-        }
-        for (Item* manzana : manzanas) {
-            manzana->actualizar(dt);
         }
         for (ObjetoFijo* muro : muros) {
             muro->actualizar(dt);

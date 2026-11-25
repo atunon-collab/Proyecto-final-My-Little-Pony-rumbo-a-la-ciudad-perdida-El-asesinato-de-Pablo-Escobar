@@ -2,7 +2,6 @@
 #include "Recursos.h"
 #include <QPen>
 #include <QBrush>
-#include <QtMath>
 #include <cmath>
 
 Plataforma::Plataforma(double x, double y, double ancho, double alto, const QString& textura, TipoPlataforma tipo, double fase, double velocidad)
@@ -95,7 +94,7 @@ Techo::Techo(double x, double y, double ancho, double alto, const QString& image
 }
 
 Item::Item(TipoItem tipo, QPointF posicion, bool cenital)
-    : tipo(tipo), tiempo(0)
+    : tipo(tipo)
 {
     QString archivo = tipo == ITEM_CRISTAL ? "cristal" : "manzana";
     ponerImagen(cargarImagen(":/objetos/" + archivo + ".png", 38, 38), true);
@@ -104,30 +103,19 @@ Item::Item(TipoItem tipo, QPointF posicion, bool cenital)
         crearSombra(28);
     }
     setPos(posicion);
+    setAltura(5);
     setZValue(15);
 }
 
-void Item::actualizar(double dt)
-{
-    tiempo += dt;
-    setAltura(5 + 5 * qSin(tiempo * 4));
-}
-
 Prueba::Prueba(int indice, const QString& imagen, QPointF posicion)
-    : indice(indice), tiempo(0)
+    : indice(indice)
 {
     ponerImagen(cargarImagen(":/objetos/" + imagen + ".png", 44, 44), true);
     definirCaja(64, 64, false);
     crearSombra(34);
     setPos(posicion);
+    setAltura(6);
     setZValue(15);
-}
-
-void Prueba::actualizar(double dt)
-{
-    tiempo += dt;
-    setOpacity(0.75 + 0.25 * qSin(tiempo * 5));
-    setAltura(6 + 4 * qSin(tiempo * 3));
 }
 
 ObjetoFijo::ObjetoFijo(TipoObjeto tipo, const QString& imagen, QPointF posicion, double ancho, double alto, bool desdePies)

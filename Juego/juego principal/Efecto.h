@@ -3,7 +3,7 @@
 
 #include "Entidad.h"
 
-// Efecto visual corto (explosion, polvo, destello) que crece, se desvanece y desaparece
+// Efecto visual corto (golpe o explosion) que crece, se desvanece y desaparece
 class Efecto : public Entidad
 {
 public:

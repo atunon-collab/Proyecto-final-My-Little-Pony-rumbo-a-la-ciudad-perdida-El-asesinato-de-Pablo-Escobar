@@ -27,29 +27,11 @@ QPointF AnomaliaTemporal::empujeTangente() const
     return QPointF(-qSin(giro.getAngulo()), qCos(giro.getAngulo())) * sentido;
 }
 
-Portal::Portal(QPointF centro, double radio, int cantidadOrbes)
-    : listo(false), pulso(0)
+Portal::Portal(QPointF centro)
 {
     ponerImagen(cargarImagen(":/objetos/portal.png", 150, 150), false);
     definirCaja(90, 90, false);
     setPos(centro);
     setZValue(5);
-    QPixmap imagenOrbe = cargarImagen(":/objetos/orbe.png", 30, 30);
-    for (int i = 0; i < cantidadOrbes; i++) {
-        giros.push_back(MovimientoCircular(QPointF(0, 0), radio, 1.8, 360.0 * i / cantidadOrbes));
-        QGraphicsPixmapItem* orbe = new QGraphicsPixmapItem(imagenOrbe, this);
-        orbe->setOffset(-15, -15);
-        orbes.push_back(orbe);
-    }
-}
-
-void Portal::actualizar(double dt)
-{
-    pulso += dt;
-    for (int i = 0; i < int(giros.size()); i++) {
-        giros[i].actualizar(dt);
-        orbes[i]->setPos(giros[i].posicion());
-    }
-    setOpacity(listo ? 1.0 : 0.75);
-    setScale(listo ? 1.0 + 0.08 * qSin(pulso * 6) : 1.0);
+    setListo(false);
 }

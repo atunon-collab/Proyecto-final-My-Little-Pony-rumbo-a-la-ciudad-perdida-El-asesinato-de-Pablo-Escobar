@@ -3,7 +3,6 @@
 
 #include "Entidad.h"
 #include "MovimientoCircular.h"
-#include <vector>
 
 // Orbe que gira alrededor de una prueba
 class AnomaliaTemporal : public Entidad
@@ -23,16 +22,8 @@ private:
 class Portal : public Entidad
 {
 public:
-    Portal(QPointF centro, double radio, int cantidadOrbes);
-
-    void actualizar(double dt);
-    void setListo(bool valor) { listo = valor; }
-
-private:
-    std::vector<MovimientoCircular> giros;
-    std::vector<QGraphicsPixmapItem*> orbes;
-    bool listo;
-    double pulso;
+    Portal(QPointF centro);
+    void setListo(bool listo) { setOpacity(listo ? 1.0 : 0.75); }
 };
 
 #endif
