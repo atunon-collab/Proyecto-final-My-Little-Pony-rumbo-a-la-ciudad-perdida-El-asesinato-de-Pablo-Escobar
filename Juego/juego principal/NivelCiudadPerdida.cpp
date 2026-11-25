@@ -549,9 +549,6 @@ void NivelCiudadPerdida::actualizar(double dt)
         for (Patrullero* secuaz : secuaces) {
             secuaz->actualizar(dt);
         }
-        for (Item* manzana : manzanas) {
-            manzana->actualizar(dt);
-        }
         for (ObjetoFijo* muro : muros) {
             muro->actualizar(dt);
         }

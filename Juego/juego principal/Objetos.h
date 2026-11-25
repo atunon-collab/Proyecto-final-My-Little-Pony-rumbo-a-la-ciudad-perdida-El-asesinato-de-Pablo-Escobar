@@ -51,12 +51,10 @@ class Item : public Entidad
 {
 public:
     Item(TipoItem tipo, QPointF posicion, bool cenital);
-    void actualizar(double dt);
     TipoItem getTipo() const { return tipo; }
 
 private:
     TipoItem tipo;
-    double tiempo;
 };
 
 // Prueba del crimen
@@ -64,12 +62,10 @@ class Prueba : public Entidad
 {
 public:
     Prueba(int indice, const QString& imagen, QPointF posicion);
-    void actualizar(double dt);
     int getIndice() const { return indice; }
 
 private:
     int indice;
-    double tiempo;
 };
 
 enum TipoObjeto { OBJ_OBSTACULO, OBJ_TOTEM, OBJ_PINCHOS, OBJ_GANCHO, OBJ_MURO, OBJ_DECORADO };

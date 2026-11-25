@@ -23,7 +23,6 @@ void Proyectil::actualizar(double dt)
 {
     // x = x + vx*dt, y = y + vy*dt
     setPos(x() + vx * dt, y() + vy * dt);
-    setRotation(rotation() + 360 * dt);
     tiempoVida += dt;
     if (tiempoVida > 4) {
         desactivar();

@@ -100,7 +100,7 @@ void NivelMedellin::cargar(MemoriaRelojero* memoria)
         cristales.push_back(cristal);
     }
 
-    portal = new Portal(QPointF(2840, 280), 120, 8);
+    portal = new Portal(QPointF(2840, 280));
     agregarEntidad(portal);
 
     for (int i = 0; i < 4; i++) {
@@ -526,15 +526,6 @@ void NivelMedellin::actualizar(double dt)
         }
         moverTwilight(dt);
         twilight->actualizar(dt);
-        portal->actualizar(dt);
-        for (Prueba* prueba : pruebas) {
-            if (!recogida[prueba->getIndice()]) {
-                prueba->actualizar(dt);
-            }
-        }
-        for (Item* cristal : cristales) {
-            cristal->actualizar(dt);
-        }
         for (AnomaliaDePrueba& registro : anomalias) {
             registro.anomalia->actualizar(dt);
         }
