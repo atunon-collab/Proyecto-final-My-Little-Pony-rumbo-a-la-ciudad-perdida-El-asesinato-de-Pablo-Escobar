@@ -14,13 +14,7 @@ Sonido::Sonido()
     reproductorMusica->setAudioOutput(salidaMusica);
     reproductorMusica->setLoops(QMediaPlayer::Infinite);
 
-    reproductorVoz = new QMediaPlayer();
-    salidaVoz = new QAudioOutput();
-    salidaVoz->setVolume(0.9);
-    reproductorVoz->setAudioOutput(salidaVoz);
-
-    const char* nombres[] = { "salto", "teleport", "explosion", "golpe", "recoger", "patada",
-                              "portal", "victoria", "seleccion", "romper" };
+    const char* nombres[] = { "golpe", "recoger", "victoria" };
     for (const char* nombre : nombres) {
         QSoundEffect* efecto = new QSoundEffect();
         efecto->setSource(QUrl(QString("qrc:/sonidos/") + nombre + ".wav"));
@@ -36,8 +30,6 @@ Sonido::~Sonido()
     }
     delete reproductorMusica;
     delete salidaMusica;
-    delete reproductorVoz;
-    delete salidaVoz;
 }
 
 void Sonido::musica(const QString& nombre)
@@ -78,11 +70,4 @@ void Sonido::efecto(const QString& nombre)
     if (encontrado != efectos.end()) {
         encontrado->second->play();
     }
-}
-
-void Sonido::voz(const QString& nombre)
-{
-    reproductorVoz->stop();
-    reproductorVoz->setSource(QUrl("qrc:/sonidos/" + nombre + ".mp3"));
-    reproductorVoz->play();
 }

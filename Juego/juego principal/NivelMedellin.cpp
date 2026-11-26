@@ -83,14 +83,6 @@ void NivelMedellin::cargar(MemoriaRelojero* memoria)
         agregarEntidad(obstaculo);
         obstaculos.push_back(obstaculo);
     }
-    struct Adorno { const char* imagen; double x, y, tamano; };
-    Adorno adornos[] = {
-        { "macetas", 400, 1180, 60 }, { "caneca", 2700, 1420, 40 }, { "ladrillos", 820, 1420, 50 },
-        { "satelite", 2420, 600, 55 }, { "matera", 1150, 1480, 40 }, { "ropa", 1700, 1900, 80 }
-    };
-    for (const Adorno& a : adornos) {
-        agregarEntidad(new ObjetoFijo(OBJ_DECORADO, a.imagen, QPointF(a.x, a.y), a.tamano, a.tamano));
-    }
 
     QPointF posicionesPruebas[] = { QPointF(720, 1300), QPointF(1720, 1820), QPointF(1745, 240), QPointF(2850, 1780) };
     for (int i = 0; i < 4; i++) {
@@ -108,7 +100,7 @@ void NivelMedellin::cargar(MemoriaRelojero* memoria)
         cristales.push_back(cristal);
     }
 
-    portal = new Portal(QPointF(2840, 280), 120, 8);
+    portal = new Portal(QPointF(2840, 280));
     agregarEntidad(portal);
 
     for (int i = 0; i < 4; i++) {
@@ -170,7 +162,6 @@ void NivelMedellin::teclaPresionada(int tecla)
     if (tecla == Qt::Key_Space) {
         if (!twilight->estaEnElAire() && twilight->congelada <= 0) {
             twilight->saltar();
-            juego->getSonido()->efecto("salto");
         }
     } else if (tecla == Qt::Key_E) {
         if (twilight->puedeTeletransportarse()) {
@@ -206,9 +197,6 @@ void NivelMedellin::teletransportar(QPointF direccion)
         return;
     }
     twilight->terminarTeletransporte();
-    juego->getSonido()->efecto("teleport");
-    crearEfecto("efecto_teleport", antes + QPointF(0, -40), 90, 0.45, 1.4);
-    crearEfecto("efecto_teleport", destino + QPointF(0, -40), 90, 0.45, 1.4);
 }
 
 bool NivelMedellin::sobreTecho(Entidad* entidad) const
@@ -283,7 +271,6 @@ void NivelMedellin::moverTwilight(double dt)
         return;
     }
     if (!sobreTecho(twilight)) {
-        crearEfecto("efecto_polvo", twilight->pos(), 90, 0.5, 1.8);
         twilight->setVida(twilight->getVida() - 1);
         twilight->hacerInvulnerable(1.5);
         twilight->setPos(ultimoSeguro);
@@ -323,7 +310,6 @@ void NivelMedellin::revisarColisiones(double dt)
             recogidas++;
             porAnalizar.push_back(i);
             prueba->setVisible(false);
-            crearEfecto("efecto_brillo", prueba->pos() + QPointF(0, -30), 70, 0.6, 2.0);
             juego->getSonido()->efecto("recoger");
             mostrarMensaje("Prueba recogida: " + nombrePrueba(i) + "  (Q para analizarla)", 3);
             for (AnomaliaDePrueba& registro : anomalias) {
@@ -353,7 +339,6 @@ void NivelMedellin::revisarColisiones(double dt)
         if (cristal->estaActiva() && enElPiso && twilight->colisionaCon(cristal)) {
             twilight->magia = qMin(100.0, twilight->magia + 40);
             cristal->desactivar();
-            crearEfecto("efecto_brillo", cristal->pos() + QPointF(0, -25), 55, 0.5, 2.0);
             juego->getSonido()->efecto("recoger");
         }
     }
@@ -421,6 +406,9 @@ void NivelMedellin::actualizarRelojero(double dt)
         relojero->setVelocidad(QPointF(0, 0));
     }
     relojero->actualizar(dt);
+    if (relojero->debeEscapar(twilight->pos())) {
+        teletransportarRelojero();
+    }
 
     if (granadaPendiente > 0) {
         granadaPendiente -= dt;
@@ -463,7 +451,6 @@ void NivelMedellin::ejecutarAccion(Accion accion)
     } else if (accion == PROYECTIL) {
         relojero->lanzarHechizo();
         lanzarGranada(twilight->pos());
-        juego->getSonido()->efecto("salto");
         if (config.proyectilDoble) {
             granadaPendiente = 0.35;
             objetivoPendiente = twilight->pos() + QPointF(azar(-70, 70), azar(-70, 70));
@@ -485,20 +472,22 @@ void NivelMedellin::ejecutarAccion(Accion accion)
         }
         relojero->activarEspera(OBSTACULO, 6.0);
     } else if (accion == TELETRANSPORTE) {
-        int cantidadTechos = int(sizeof(TECHOS) / sizeof(TECHOS[0]));
-        for (int intento = 0; intento < 40; intento++) {
-            const DatosTecho& d = TECHOS[QRandomGenerator::global()->bounded(cantidadTechos)];
-            QPointF destino(azar(d.x + 30, d.x + d.ancho - 30), azar(d.y + 40, d.y + d.alto - 20));
-            double distancia = largo(destino - twilight->pos());
-            if (distancia > 350 && distancia < 700 && posicionValidaRelojero(destino)) {
-                crearEfecto("efecto_teleport", relojero->pos() + QPointF(0, -40), 90, 0.45, 1.4);
-                relojero->teletransportar(destino);
-                crearEfecto("efecto_teleport", destino + QPointF(0, -40), 90, 0.45, 1.4);
-                juego->getSonido()->efecto("teleport");
-                break;
-            }
-        }
+        teletransportarRelojero();
         relojero->activarEspera(TELETRANSPORTE, 4.0);
+    }
+}
+
+void NivelMedellin::teletransportarRelojero()
+{
+    int cantidadTechos = int(sizeof(TECHOS) / sizeof(TECHOS[0]));
+    for (int intento = 0; intento < 60; intento++) {
+        const DatosTecho& d = TECHOS[QRandomGenerator::global()->bounded(cantidadTechos)];
+        QPointF destino(azar(d.x + 30, d.x + d.ancho - 30), azar(d.y + 40, d.y + d.alto - 20));
+        double distancia = largo(destino - twilight->pos());
+        if (distancia > 350 && distancia < 700 && posicionValidaRelojero(destino)) {
+            relojero->teletransportar(destino);
+            return;
+        }
     }
 }
 
@@ -538,15 +527,6 @@ void NivelMedellin::actualizar(double dt)
         }
         moverTwilight(dt);
         twilight->actualizar(dt);
-        portal->actualizar(dt);
-        for (Prueba* prueba : pruebas) {
-            if (!recogida[prueba->getIndice()]) {
-                prueba->actualizar(dt);
-            }
-        }
-        for (Item* cristal : cristales) {
-            cristal->actualizar(dt);
-        }
         for (AnomaliaDePrueba& registro : anomalias) {
             registro.anomalia->actualizar(dt);
         }

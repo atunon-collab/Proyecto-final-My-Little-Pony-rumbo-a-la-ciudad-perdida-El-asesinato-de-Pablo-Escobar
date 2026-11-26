@@ -11,13 +11,12 @@ class Menu : public Pantalla
 public:
     Menu(Juego* juego);
 
-    void actualizar(double dt);
+    void actualizar(double) {}
     void teclaPresionada(int tecla);
 
 private:
     int estado;
     int opcion;
-    double tiempo;
     std::vector<TextoBorde*> opciones;
     QGraphicsPixmapItem* placaTitulo;
     TextoBorde* titulo1;
@@ -26,7 +25,6 @@ private:
     QGraphicsPixmapItem* panel;
     QGraphicsPixmapItem* cursor;
     QGraphicsTextItem* descripcion;
-    TextoBorde* advertencia;
     QGraphicsTextItem* textoControles;
 
     void mostrarPrincipal();

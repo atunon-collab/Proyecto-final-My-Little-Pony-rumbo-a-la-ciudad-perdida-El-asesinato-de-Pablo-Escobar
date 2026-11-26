@@ -3,11 +3,9 @@
 #include "Sonido.h"
 #include "Constantes.h"
 #include "Estilo.h"
-#include <QPen>
-#include <QBrush>
 
 Figura::Figura(const Actor& actor)
-    : animando(!actor.animado)
+    : animando(false)
 {
     agregarAnimacion("base", actor.sprite, !actor.animado, actor.escala);
     mirarHacia(actor.derecha);
@@ -24,7 +22,7 @@ void Figura::actualizar(double dt)
 }
 
 Escena::Escena(Juego* juego, const DatosEscena& datos)
-    : Pantalla(juego), datos(datos), linea(0), letrasVisibles(0), destello(0)
+    : Pantalla(juego), datos(datos), linea(0)
 {
     agregarFondo(datos.fondo);
     for (const Actor& actor : datos.actores) {
@@ -35,10 +33,7 @@ Escena::Escena(Juego* juego, const DatosEscena& datos)
     agregarMarco("ui_dialogo", 40, 535);
     textoNombre = agregarTextoBorde("", fuenteTitulo(16), DORADO, 82, 593, 3);
     textoDialogo = agregarTexto("", fuenteTexto(22), CREMA, 76, 613, 1110);
-    textoAyuda = agregarTexto("Enter continuar · Esc saltar", fuenteTexto(15), QColor(170, 170, 200), 950, 591);
-    rectDestello = escena->addRect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA, Qt::NoPen, QBrush(Qt::white));
-    rectDestello->setZValue(2000);
-    rectDestello->setOpacity(0);
+    textoAyuda = agregarTexto("Enter continuar | Esc saltar", fuenteTexto(15), QColor(170, 170, 200), 950, 591);
     if (!datos.musica.isEmpty()) {
         juego->getSonido()->musica(datos.musica);
     }
@@ -49,8 +44,7 @@ void Escena::empezarLinea()
 {
     const LineaDialogo& actual = datos.lineas[linea];
     textoNombre->setTexto(actual.hablante);
-    textoDialogo->setPlainText("");
-    letrasVisibles = 0;
+    textoDialogo->setPlainText(actual.texto);
     if (actual.actor >= 0 && actual.actor < int(figuras.size())) {
         Figura* figura = figuras[actual.actor];
         if (actual.efecto == EF_APARECER) {
@@ -62,32 +56,12 @@ void Escena::empezarLinea()
             figura->animando = true;
         }
     }
-    if (actual.efecto == EF_DESTELLO || actual.efecto == EF_ANIMAR) {
-        destello = 1.0;
-        juego->getSonido()->efecto("portal");
-    }
-    if (!actual.voz.isEmpty()) {
-        juego->getSonido()->voz(actual.voz);
-    }
 }
 
 void Escena::actualizar(double dt)
 {
     for (Figura* figura : figuras) {
         figura->actualizar(dt);
-    }
-    const QString& texto = datos.lineas[linea].texto;
-    if (letrasVisibles < texto.size()) {
-        int antes = int(letrasVisibles);
-        letrasVisibles += 55 * dt;
-        // setPlainText rehace todo el documento del texto: solo cuando aparece una letra nueva
-        if (int(letrasVisibles) != antes) {
-            textoDialogo->setPlainText(texto.left(int(letrasVisibles)));
-        }
-    }
-    if (destello > 0) {
-        destello -= dt * 1.5;
-        rectDestello->setOpacity(destello > 0 ? destello : 0);
     }
 }
 
@@ -99,12 +73,6 @@ void Escena::teclaPresionada(int tecla)
         return;
     }
     if (tecla != Qt::Key_Return) {
-        return;
-    }
-    const QString& texto = datos.lineas[linea].texto;
-    if (letrasVisibles < texto.size()) {
-        letrasVisibles = texto.size();
-        textoDialogo->setPlainText(texto);
         return;
     }
     if (linea + 1 >= int(datos.lineas.size())) {

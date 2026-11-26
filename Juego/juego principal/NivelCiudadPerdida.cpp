@@ -85,29 +85,6 @@ void NivelCiudadPerdida::cargar(MemoriaRelojero* memoria)
     escalera = agregarPlataforma(400, 1800, 240, 30, "plat_piedra");
     escalera->setHabilitada(false);
 
-    struct Adorno { const char* imagen; double x, y, ancho, alto; };
-    Adorno adornos[] = {
-        { "helecho", 60, 3560, 110, 80 }, { "bambu", 1230, 3560, 80, 100 }, { "pena", 250, 3560, 80, 52 },
-        { "heliconia", 370, 3440, 70, 66 }, { "columna", 870, 3320, 54, 76 }, { "bromelia", 1210, 3200, 70, 56 },
-        { "helecho", 60, 2840, 90, 64 }, { "idolo", 1215, 2880, 50, 76 }, { "bromelia", 360, 2640, 60, 48 },
-        { "heliconia", 880, 2280, 60, 56 }, { "helecho", 1215, 2160, 80, 58 }, { "antorcha", 30, 1920, 40, 100 },
-        { "antorcha", 1250, 1920, 40, 100 }, { "idolo", 1050, 1920, 54, 82 }, { "columna", 680, 1560, 54, 76 },
-        { "bambu", 60, 960, 70, 90 }, { "pena", 1210, 1320, 70, 46 }, { "antorcha", 460, Y_TEMPLO, 40, 100 },
-        { "antorcha", 820, Y_TEMPLO, 40, 100 }, { "idolo", 120, Y_CIMA, 60, 92 }, { "idolo", 1180, Y_CIMA, 60, 92 },
-        { "heliconia", 40, Y_CIMA, 70, 66 }
-    };
-    for (const Adorno& a : adornos) {
-        ObjetoFijo* adorno = new ObjetoFijo(OBJ_DECORADO, a.imagen, QPointF(a.x, a.y), a.ancho, a.alto);
-        adorno->setZValue(6);
-        agregarEntidad(adorno);
-    }
-    QPointF enredaderas[] = { QPointF(180, 2915), QPointF(1090, 3275), QPointF(460, 2715), QPointF(720, 2115), QPointF(180, 1755) };
-    for (const QPointF& p : enredaderas) {
-        ObjetoFijo* enredadera = new ObjetoFijo(OBJ_DECORADO, "enredadera", p, 80, 90, false);
-        enredadera->setZValue(4);
-        agregarEntidad(enredadera);
-    }
-
     ObjetoFijo* muro = new ObjetoFijo(OBJ_MURO, "muro", QPointF(430, 2960), 84, 200);
     agregarEntidad(muro);
     muros.push_back(muro);
@@ -199,7 +176,7 @@ void NivelCiudadPerdida::cargar(MemoriaRelojero* memoria)
 
     crearCorazones(3, true);
     textoAltura = crearPlacaDerecha("icono_flecha");
-    mostrarMensaje("¡Sube hasta el templo! E lanza manzanas · W liana · R lazo", 5);
+    mostrarMensaje("¡Sube hasta el templo! E lanza manzanas | W liana | R lazo", 5);
     moverCamara(aj->pos());
 }
 
@@ -215,11 +192,9 @@ void NivelCiudadPerdida::teclaPresionada(int tecla)
             aj->soltarse();
             aj->movimiento.lanzar(aj->pos(), v.x() * 1.25, qMin(v.y() * 1.25, 0.0) - IMPULSO_SOLTAR);
             aj->enSuelo = false;
-            juego->getSonido()->efecto("salto");
         } else if (aj->enSuelo) {
             aj->movimiento.setVy(-VELOCIDAD_SALTO);
             aj->enSuelo = false;
-            juego->getSonido()->efecto("salto");
         }
     } else if (tecla == Qt::Key_E && aj->puedeLanzar()) {
         lanzarManzana();
@@ -227,7 +202,6 @@ void NivelCiudadPerdida::teclaPresionada(int tecla)
         for (ObjetoFijo* gancho : ganchos) {
             if (gancho->y() < aj->y() - 60 && distancia(gancho->pos(), aj->pos()) < 340) {
                 aj->lanzarLazo(gancho->pos(), aj->x() < gancho->x());
-                juego->getSonido()->efecto("patada");
                 break;
             }
         }
@@ -241,7 +215,6 @@ void NivelCiudadPerdida::lanzarManzana()
     agregarEntidad(manzana);
     tiros.push_back(manzana);
     aj->lanzar();
-    juego->getSonido()->efecto("patada");
 }
 
 void NivelCiudadPerdida::moverApplejack(double dt)
@@ -296,16 +269,13 @@ void NivelCiudadPerdida::actualizarTiros(double dt)
         QRectF caja = manzana->getCaja();
         for (Plataforma* p : plataformas) {
             if (manzana->estaActiva() && p->esSolida() && caja.intersects(p->getRect())) {
-                crearEfecto("efecto_polvo", manzana->pos(), 40, 0.3, 1.5);
                 manzana->desactivar();
             }
         }
         for (ObjetoFijo* muro : muros) {
             if (manzana->estaActiva() && manzana->colisionaCon(muro)) {
                 manzana->desactivar();
-                crearEfecto("efecto_polvo", muro->pos() + QPointF(0, -100), 90, 0.5, 1.6);
                 if (muro->golpear()) {
-                    juego->getSonido()->efecto("romper");
                     mostrarMensaje("¡El muro se rompió!", 1.5);
                 }
             }
@@ -326,7 +296,6 @@ void NivelCiudadPerdida::actualizarTiros(double dt)
             if (maneiac->estaVencida()) {
                 escalera->setHabilitada(true);
                 mostrarMensaje("¡Mane-iac fue vencida! Se abrió la escalera", 3);
-                juego->getSonido()->voz("aj_tarnation");
             }
         }
         if (manzana->estaActiva() && faseJefe && !relojero->esInvulnerable() && manzana->colisionaCon(relojero)) {
@@ -335,7 +304,7 @@ void NivelCiudadPerdida::actualizarTiros(double dt)
             relojero->recibirDanio(1);
             relojero->hacerInvulnerable(1.5);
             crearEfecto("efecto_explosion", relojero->pos() + QPointF(0, -45), 130, 0.6, 1.5);
-            juego->getSonido()->efecto("explosion");
+            juego->getSonido()->efecto("golpe");
             mostrarMensaje("¡Golpe al Relojero! " + QString::number(golpesAlRelojero) + "/3", 2);
         }
     }
@@ -420,7 +389,6 @@ void NivelCiudadPerdida::revisarColisiones()
     for (ObjetoFijo* totem : totems) {
         if (!totem->estaEncendido() && aj->colisionaCon(totem)) {
             totem->encender();
-            crearEfecto("efecto_aura", totem->pos() + QPointF(0, -20), 110, 0.9, 1.5);
             puntoControl = totem->pos();
             aj->setVida(aj->getVidaMax());
             juego->getSonido()->efecto("recoger");
@@ -430,7 +398,6 @@ void NivelCiudadPerdida::revisarColisiones()
     for (Item* manzana : manzanas) {
         if (manzana->estaActiva() && aj->colisionaCon(manzana)) {
             aj->curar(1);
-            crearEfecto("efecto_brillo", manzana->pos() + QPointF(0, -25), 55, 0.5, 2.0);
             manzana->desactivar();
             juego->getSonido()->efecto("recoger");
         }
@@ -465,9 +432,7 @@ void NivelCiudadPerdida::actualizarRelojero(double dt)
         }
         if (mejor != perchaActual) {
             perchaActual = mejor;
-            crearEfecto("efecto_teleport", relojero->pos() + QPointF(0, -40), 90, 0.45, 1.4);
             relojero->teletransportar(perchas[mejor]);
-            crearEfecto("efecto_teleport", perchas[mejor] + QPointF(0, -40), 90, 0.45, 1.4);
         }
     }
 
@@ -478,6 +443,9 @@ void NivelCiudadPerdida::actualizarRelojero(double dt)
         relojero->setVelocidad(QPointF(0, 0));
     }
     relojero->actualizar(dt);
+    if (relojero->debeEscapar(aj->pos())) {
+        teletransportarRelojero();
+    }
 
     QRectF zona = zonaRelojero();
     DatosNivel datos;
@@ -511,7 +479,6 @@ void NivelCiudadPerdida::ejecutarAccion(Accion accion)
         Proyectil* roca = new Proyectil("roca", 46, relojero->pos() + QPointF(0, -20), objetivo, config.rapidezProyectil);
         agregarEntidad(roca);
         rocas.push_back(roca);
-        juego->getSonido()->efecto("patada");
         relojero->activarEspera(PROYECTIL, faseJefe ? config.esperaProyectil : config.intervaloRocas);
     } else if (accion == OBSTACULO) {
         TrampaColgante* cercana = nullptr;
@@ -529,25 +496,38 @@ void NivelCiudadPerdida::ejecutarAccion(Accion accion)
         }
         relojero->activarEspera(OBSTACULO, 6.0);
     } else if (accion == TELETRANSPORTE) {
-        if (faseJefe) {
-            relojero->teletransportar(QPointF(relojero->x() < 640 ? 740 : 540, Y_TEMPLO));
-        } else {
-            int mejor = perchaActual;
-            double mejorDiferencia = 1e9;
-            for (int i = 0; i < int(perchas.size()); i++) {
-                bool otroLado = (perchas[i].x() < 640) != (perchas[perchaActual].x() < 640);
-                double diferencia = qAbs(perchas[i].y() - perchas[perchaActual].y());
-                if (otroLado && diferencia < mejorDiferencia && perchas[i].y() < aj->y() - 150) {
-                    mejorDiferencia = diferencia;
-                    mejor = i;
-                }
-            }
-            perchaActual = mejor;
-            relojero->teletransportar(perchas[mejor]);
-        }
-        juego->getSonido()->efecto("teleport");
+        teletransportarRelojero();
         relojero->activarEspera(TELETRANSPORTE, 4.0);
     }
+}
+
+void NivelCiudadPerdida::teletransportarRelojero()
+{
+    if (faseJefe) {
+        // Al extremo del templo que queda lejos de Applejack
+        relojero->teletransportar(QPointF(aj->x() < 640 ? 780 : 500, Y_TEMPLO));
+        return;
+    }
+    int mejor = perchaActual;
+    double mejorDiferencia = 1e9;
+    for (int i = 0; i < int(perchas.size()); i++) {
+        bool otroLado = (perchas[i].x() < 640) != (perchas[perchaActual].x() < 640);
+        double diferencia = qAbs(perchas[i].y() - perchas[perchaActual].y());
+        if (otroLado && diferencia < mejorDiferencia && perchas[i].y() < aj->y() - 150) {
+            mejorDiferencia = diferencia;
+            mejor = i;
+        }
+    }
+    if (mejor == perchaActual) {
+        // Sin percha al otro lado por encima: la mas lejana de Applejack
+        for (int i = 0; i < int(perchas.size()); i++) {
+            if (distancia(perchas[i], aj->pos()) > distancia(perchas[mejor], aj->pos())) {
+                mejor = i;
+            }
+        }
+    }
+    perchaActual = mejor;
+    relojero->teletransportar(perchas[mejor]);
 }
 
 void NivelCiudadPerdida::empezarJefe()
@@ -561,7 +541,6 @@ void NivelCiudadPerdida::empezarJefe()
     trampas.push_back(hacha1);
     trampas.push_back(hacha2);
     mostrarMensaje("¡Lánzale manzanas al Relojero!", 4);
-    juego->getSonido()->musica("jefe");
 }
 
 void NivelCiudadPerdida::actualizar(double dt)
@@ -580,9 +559,6 @@ void NivelCiudadPerdida::actualizar(double dt)
         }
         for (Patrullero* secuaz : secuaces) {
             secuaz->actualizar(dt);
-        }
-        for (Item* manzana : manzanas) {
-            manzana->actualizar(dt);
         }
         for (ObjetoFijo* muro : muros) {
             muro->actualizar(dt);
