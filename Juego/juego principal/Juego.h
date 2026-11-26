@@ -9,10 +9,6 @@
 #include "TiposAgente.h"
 
 class Pantalla;
-class Menu;
-class Escena;
-class NivelMedellin;
-class NivelCiudadPerdida;
 class Sonido;
 
 enum Paso {
@@ -49,13 +45,8 @@ private:
     Configuracion config;
     MemoriaRelojero memoria;
     int paso;
-    Menu* menu;
-    Escena* escena;
-    NivelMedellin* medellin;
-    NivelCiudadPerdida* ciudad;
+    Pantalla* actual;
 
-    Pantalla* pantallaActual() const;
-    void borrarPantalla();
     void irAPaso(int nuevoPaso);
 };
 

@@ -1,6 +1,6 @@
 #include "Relojero.h"
 #include <QRandomGenerator>
-#include <QtMath>
+#include <QLineF>
 
 const double PERIODO_DECISION = 0.25;
 const double TIEMPO_OBSERVACION = 1.5;
@@ -79,8 +79,7 @@ bool Relojero::pensar(double dt, const DatosNivel& datos)
 
 double Relojero::distanciaA(QPointF punto) const
 {
-    QPointF d = punto - pos();
-    return qSqrt(d.x() * d.x() + d.y() * d.y());
+    return QLineF(pos(), punto).length();
 }
 
 Situacion Relojero::percibir(const DatosNivel& datos) const

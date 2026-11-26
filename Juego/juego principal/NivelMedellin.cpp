@@ -11,6 +11,7 @@
 #include "Recursos.h"
 #include "Estilo.h"
 #include <QRandomGenerator>
+#include <QLineF>
 #include <QtMath>
 #include <algorithm>
 
@@ -34,16 +35,6 @@ static const DatosTecho TECHOS[] = {
     { 2780, 920, 56, 200, "puente_v" }, { 864, 690, 236, 56, "puente_h" },   { 1930, 660, 210, 56, "puente_h" },
     { 866, 1240, 234, 56, "puente_h" }, { 1990, 1260, 150, 56, "puente_h" }
 };
-
-static double azar(double minimo, double maximo)
-{
-    return minimo + QRandomGenerator::global()->generateDouble() * (maximo - minimo);
-}
-
-static double largo(QPointF v)
-{
-    return qSqrt(v.x() * v.x() + v.y() * v.y());
-}
 
 NivelMedellin::NivelMedellin(Juego* juego, MemoriaRelojero* memoria)
     : Nivel(juego, ANCHO_MEDELLIN, ALTO_MEDELLIN), twilight(nullptr), relojero(nullptr), portal(nullptr), recogidas(0),
@@ -173,7 +164,7 @@ void NivelMedellin::teclaPresionada(int tecla)
             if (direccion == QPointF(0, 0)) {
                 direccion = QPointF(twilight->miraDerecha() ? 1 : -1, 0);
             }
-            teletransportar(direccion / largo(direccion));
+            teletransportar(direccion / QLineF(QPointF(), direccion).length());
         }
     } else if (tecla == Qt::Key_Q) {
         if (porAnalizar.empty()) {
@@ -460,7 +451,7 @@ void NivelMedellin::ejecutarAccion(Accion accion)
         int mejor = -1;
         double mejorDistancia = 1e9;
         for (int i = 0; i < 4; i++) {
-            double d = largo(pruebas[i]->pos() - twilight->pos());
+            double d = QLineF(twilight->pos(), pruebas[i]->pos()).length();
             if (!recogida[i] && d < mejorDistancia) {
                 mejorDistancia = d;
                 mejor = i;
@@ -483,7 +474,7 @@ void NivelMedellin::teletransportarRelojero()
     for (int intento = 0; intento < 60; intento++) {
         const DatosTecho& d = TECHOS[QRandomGenerator::global()->bounded(cantidadTechos)];
         QPointF destino(azar(d.x + 30, d.x + d.ancho - 30), azar(d.y + 40, d.y + d.alto - 20));
-        double distancia = largo(destino - twilight->pos());
+        double distancia = QLineF(twilight->pos(), destino).length();
         if (distancia > 350 && distancia < 700 && posicionValidaRelojero(destino)) {
             relojero->teletransportar(destino);
             return;
@@ -511,7 +502,7 @@ void NivelMedellin::apuntarFlecha(double dt)
     }
     tiempoFlecha -= dt;
     QPointF hacia = destino - twilight->pos();
-    double distancia = qMax(1.0, largo(hacia));
+    double distancia = qMax(1.0, QLineF(QPointF(), hacia).length());
     flecha->setPos(twilight->pos() + hacia / distancia * 80 + QPointF(0, -50));
     flecha->setRotation(qRadiansToDegrees(qAtan2(hacia.y(), hacia.x())));
     flecha->setVisible(true);

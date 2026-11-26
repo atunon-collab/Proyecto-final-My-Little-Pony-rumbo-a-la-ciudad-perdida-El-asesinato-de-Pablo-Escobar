@@ -1,17 +1,15 @@
 #ifndef APPLEJACK_H
 #define APPLEJACK_H
 
-#include "Poni.h"
+#include "Personaje.h"
 #include "MovimientoParabolico.h"
 #include "MovimientoPendular.h"
 #include <QGraphicsLineItem>
 
-class Plataforma;
-
 const double ALTURA_MANOS = 125;
 
 // Applejack, la protagonista de la Ciudad Perdida
-class Applejack : public Poni
+class Applejack : public Personaje
 {
 public:
     Applejack(double gravedad);
@@ -30,7 +28,6 @@ public:
 
     MovimientoParabolico movimiento;
     bool enSuelo;
-    Plataforma* plataformaActual;
     double esperaAgarre;
 
 private:

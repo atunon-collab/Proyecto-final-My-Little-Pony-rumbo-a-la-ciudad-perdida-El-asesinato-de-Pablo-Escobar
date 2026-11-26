@@ -94,7 +94,6 @@ Techo::Techo(double x, double y, double ancho, double alto, const QString& image
 }
 
 Item::Item(TipoItem tipo, QPointF posicion, bool cenital)
-    : tipo(tipo)
 {
     QString archivo = tipo == ITEM_CRISTAL ? "cristal" : "manzana";
     ponerImagen(cargarImagen(":/objetos/" + archivo + ".png", 38, 38), true);
@@ -119,7 +118,7 @@ Prueba::Prueba(int indice, const QString& imagen, QPointF posicion)
 }
 
 ObjetoFijo::ObjetoFijo(TipoObjeto tipo, const QString& imagen, QPointF posicion, double ancho, double alto, bool desdePies)
-    : tipo(tipo), encendido(false), golpes(0), temblor(0), posicionOriginal(posicion)
+    : encendido(false), golpes(0), temblor(0), posicionOriginal(posicion)
 {
     ponerImagen(cargarImagen(":/objetos/" + imagen + ".png", int(ancho), int(alto)), desdePies);
     if (tipo == OBJ_OBSTACULO) {

@@ -3,7 +3,7 @@
 #include <QtMath>
 
 Applejack::Applejack(double gravedad)
-    : Poni("Applejack", 3, 200), movimiento(gravedad), enSuelo(true), plataformaActual(nullptr), esperaAgarre(0),
+    : Personaje(3, 200), movimiento(gravedad), enSuelo(true), esperaAgarre(0),
       colgadoDe(nullptr), lazo(nullptr), esperaLanzar(0)
 {
     agregarAnimacion("quieta", "aj_quieta");

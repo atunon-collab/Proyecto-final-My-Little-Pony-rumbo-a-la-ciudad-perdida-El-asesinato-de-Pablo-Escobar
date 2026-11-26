@@ -51,10 +51,6 @@ class Item : public Entidad
 {
 public:
     Item(TipoItem tipo, QPointF posicion, bool cenital);
-    TipoItem getTipo() const { return tipo; }
-
-private:
-    TipoItem tipo;
 };
 
 // Prueba del crimen
@@ -76,13 +72,11 @@ class ObjetoFijo : public Entidad
 public:
     ObjetoFijo(TipoObjeto tipo, const QString& imagen, QPointF posicion, double ancho, double alto, bool desdePies = true);
     void actualizar(double dt);
-    TipoObjeto getTipo() const { return tipo; }
     void encender();
     bool estaEncendido() const { return encendido; }
     bool golpear();
 
 private:
-    TipoObjeto tipo;
     bool encendido;
     int golpes;
     double temblor;

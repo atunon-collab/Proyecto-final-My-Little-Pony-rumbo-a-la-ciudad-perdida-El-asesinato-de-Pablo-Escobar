@@ -1,11 +1,11 @@
 #ifndef TWILIGHT_H
 #define TWILIGHT_H
 
-#include "Poni.h"
+#include "Personaje.h"
 #include "Configuracion.h"
 
 // Protagonista del nivel de Medellin (vista desde arriba)
-class Twilight : public Poni
+class Twilight : public Personaje
 {
 public:
     Twilight(const Configuracion& config);

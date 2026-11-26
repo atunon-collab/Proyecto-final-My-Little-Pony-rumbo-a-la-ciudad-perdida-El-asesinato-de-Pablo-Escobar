@@ -57,6 +57,7 @@ protected:
     void mostrarCorazones(int vida);
     void mostrarMensaje(const QString& texto, double segundos);
     void ganar(int puntos);
+    static double azar(double minimo, double maximo);
     void perder(const QString& motivo);
 
 private:
