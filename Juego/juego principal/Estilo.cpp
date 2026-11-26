@@ -27,6 +27,8 @@ QFont fuenteTexto(int pixeles)
     QFont fuente(familiaTexto);
     fuente.setPixelSize(pixeles);
     fuente.setWeight(QFont::DemiBold);
+    // Sin ligaduras: en esta fuente "fi" se dibuja como una sola letra que parece una A
+    fuente.setStyleStrategy(QFont::PreferNoShaping);
     return fuente;
 }
 
