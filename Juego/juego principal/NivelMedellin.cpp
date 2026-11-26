@@ -406,6 +406,9 @@ void NivelMedellin::actualizarRelojero(double dt)
         relojero->setVelocidad(QPointF(0, 0));
     }
     relojero->actualizar(dt);
+    if (relojero->debeEscapar(twilight->pos())) {
+        teletransportarRelojero();
+    }
 
     if (granadaPendiente > 0) {
         granadaPendiente -= dt;
@@ -469,17 +472,22 @@ void NivelMedellin::ejecutarAccion(Accion accion)
         }
         relojero->activarEspera(OBSTACULO, 6.0);
     } else if (accion == TELETRANSPORTE) {
-        int cantidadTechos = int(sizeof(TECHOS) / sizeof(TECHOS[0]));
-        for (int intento = 0; intento < 40; intento++) {
-            const DatosTecho& d = TECHOS[QRandomGenerator::global()->bounded(cantidadTechos)];
-            QPointF destino(azar(d.x + 30, d.x + d.ancho - 30), azar(d.y + 40, d.y + d.alto - 20));
-            double distancia = largo(destino - twilight->pos());
-            if (distancia > 350 && distancia < 700 && posicionValidaRelojero(destino)) {
-                relojero->teletransportar(destino);
-                break;
-            }
-        }
+        teletransportarRelojero();
         relojero->activarEspera(TELETRANSPORTE, 4.0);
+    }
+}
+
+void NivelMedellin::teletransportarRelojero()
+{
+    int cantidadTechos = int(sizeof(TECHOS) / sizeof(TECHOS[0]));
+    for (int intento = 0; intento < 60; intento++) {
+        const DatosTecho& d = TECHOS[QRandomGenerator::global()->bounded(cantidadTechos)];
+        QPointF destino(azar(d.x + 30, d.x + d.ancho - 30), azar(d.y + 40, d.y + d.alto - 20));
+        double distancia = largo(destino - twilight->pos());
+        if (distancia > 350 && distancia < 700 && posicionValidaRelojero(destino)) {
+            relojero->teletransportar(destino);
+            return;
+        }
     }
 }
 

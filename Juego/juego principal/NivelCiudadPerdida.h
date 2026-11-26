@@ -59,6 +59,7 @@ private:
     void revisarColisiones();
     void actualizarRelojero(double dt);
     void ejecutarAccion(Accion accion);
+    void teletransportarRelojero();
     QRectF zonaRelojero() const;
     void empezarJefe();
     void danarApplejack(bool causadoPorRelojero);
