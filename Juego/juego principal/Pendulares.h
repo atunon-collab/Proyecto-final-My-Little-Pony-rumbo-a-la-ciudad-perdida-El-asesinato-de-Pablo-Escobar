@@ -12,7 +12,6 @@ public:
     ObjetoPendular(QPointF pivote, double longitud, double amplitudGrados, double faseGrados);
 
     void actualizar(double dt);
-    QPointF getPivote() const { return pendulo.getPivote(); }
     MovimientoPendular* getPendulo() { return &pendulo; }
 
 protected:

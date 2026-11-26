@@ -238,7 +238,6 @@ void NivelCiudadPerdida::moverApplejack(double dt)
     }
     Plataforma* debajo = nullptr;
     aj->enSuelo = moverConGravedad(aj, aj->movimiento, dt, debajo);
-    aj->plataformaActual = debajo;
     if (debajo != nullptr) {
         debajo->pisar();
         if (debajo->getTipo() == PLAT_FIJA) {

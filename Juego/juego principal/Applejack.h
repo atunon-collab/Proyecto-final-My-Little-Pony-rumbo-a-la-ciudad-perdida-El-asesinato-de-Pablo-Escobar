@@ -6,8 +6,6 @@
 #include "MovimientoPendular.h"
 #include <QGraphicsLineItem>
 
-class Plataforma;
-
 const double ALTURA_MANOS = 125;
 
 // Applejack, la protagonista de la Ciudad Perdida
@@ -30,7 +28,6 @@ public:
 
     MovimientoParabolico movimiento;
     bool enSuelo;
-    Plataforma* plataformaActual;
     double esperaAgarre;
 
 private:
