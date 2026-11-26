@@ -49,12 +49,6 @@ void Sonido::musica(const QString& nombre)
     }
 }
 
-void Sonido::detenerMusica()
-{
-    musicaActual = "";
-    reproductorMusica->stop();
-}
-
 void Sonido::efecto(const QString& nombre)
 {
     auto encontrado = efectos.find(nombre);

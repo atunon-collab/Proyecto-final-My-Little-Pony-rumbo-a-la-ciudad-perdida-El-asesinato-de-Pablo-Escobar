@@ -74,6 +74,7 @@ private:
 
     void mostrarPanel(const QString& titulo, const QString& linea1, const QString& linea2, const QString& linea3, int resaltada);
     void mostrarPausa();
+    void ocultarMensaje();
 };
 
 #endif

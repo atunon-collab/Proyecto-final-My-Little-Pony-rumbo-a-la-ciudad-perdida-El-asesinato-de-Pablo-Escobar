@@ -4,7 +4,6 @@ Configuracion configuracionPara(int dificultad)
 {
     Configuracion c;
     c.dificultad = MEDIO;
-    c.nombre = "Medio";
     c.tiempoPortal = 120;
     c.multObjetos = 1.0;
     c.esperaTeleport = 2.5;
@@ -25,7 +24,6 @@ Configuracion configuracionPara(int dificultad)
 
     if (dificultad == FACIL) {
         c.dificultad = FACIL;
-        c.nombre = "Facil";
         c.tiempoPortal = 168;
         c.multObjetos = 1.5;
         c.esperaTeleport = 1.75;
@@ -44,7 +42,6 @@ Configuracion configuracionPara(int dificultad)
         c.totems = 4;
     } else if (dificultad == DISCORDIA) {
         c.dificultad = DISCORDIA;
-        c.nombre = "Discordia";
         c.tiempoPortal = 90;
         c.multObjetos = 0.5;
         c.esperaTeleport = 4.0;
