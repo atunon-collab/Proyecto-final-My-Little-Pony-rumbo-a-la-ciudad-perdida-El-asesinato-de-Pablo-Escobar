@@ -492,8 +492,8 @@ void NivelCiudadPerdida::ejecutarAccion(Accion accion)
 void NivelCiudadPerdida::teletransportarRelojero()
 {
     if (faseJefe) {
-        // Al extremo del templo que queda lejos de Applejack
-        relojero->teletransportar(QPointF(aj->x() < 640 ? 780 : 500, Y_TEMPLO));
+        // Cambia de lado del templo; ir siempre al lado lejano lo dejaba donde el borde del templo tapa las manzanas
+        relojero->teletransportar(QPointF(relojero->x() < 640 ? 740 : 540, Y_TEMPLO));
         return;
     }
     int mejor = perchaActual;
