@@ -76,6 +76,7 @@ private:
     void lanzarGranada(QPointF objetivo);
     void actualizarRelojero(double dt);
     void ejecutarAccion(Accion accion);
+    void teletransportarRelojero();
     void apuntarFlecha(double dt);
     void actualizarHud();
 };

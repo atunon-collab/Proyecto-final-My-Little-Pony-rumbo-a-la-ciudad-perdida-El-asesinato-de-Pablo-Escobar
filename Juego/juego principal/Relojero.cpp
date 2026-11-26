@@ -4,10 +4,12 @@
 
 const double PERIODO_DECISION = 0.25;
 const double TIEMPO_OBSERVACION = 1.5;
+// Mas cerca que esto el Relojero se teletransporta para que nunca lo toquen
+const double DISTANCIA_ESCAPE = 170;
 
 Relojero::Relojero(MemoriaRelojero* memoria, const Configuracion& config)
     : Personaje(3, 150), memoria(memoria), alfa(config.alfa), reloj(0), observando(0), accion(OBSERVAR),
-      situacionAntes(LEJOS), puntoHuida(0, 0), tiempoHuida(0), tiempoHechizo(0), efectoTeleport(0)
+      situacionAntes(LEJOS), puntoHuida(0, 0), tiempoHuida(0), tiempoHechizo(0), efectoTeleport(0), esperaEscape(0)
 {
     agregarAnimacion("quieto", "relojero_quieto");
     agregarAnimacion("trote", "relojero_trote");
@@ -30,6 +32,9 @@ void Relojero::actualizar(double dt)
     }
     if (tiempoHechizo > 0) {
         tiempoHechizo -= dt;
+    }
+    if (esperaEscape > 0) {
+        esperaEscape -= dt;
     }
     if (efectoTeleport > 0) {
         efectoTeleport -= dt;
@@ -170,4 +175,10 @@ void Relojero::teletransportar(QPointF destino)
     tiempoHuida = 0;
     velocidad = QPointF(0, 0);
     efectoTeleport = 0.5;
+    esperaEscape = 0.4;
+}
+
+bool Relojero::debeEscapar(QPointF jugador) const
+{
+    return esperaEscape <= 0 && distanciaA(jugador) < DISTANCIA_ESCAPE;
 }

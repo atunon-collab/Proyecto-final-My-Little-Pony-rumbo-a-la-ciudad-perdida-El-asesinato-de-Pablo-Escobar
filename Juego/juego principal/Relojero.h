@@ -20,6 +20,7 @@ public:
     QPointF pasoHuida(double dt) const;
     void mover(QPointF paso, double dt);
     void teletransportar(QPointF destino);
+    bool debeEscapar(QPointF jugador) const;
     void lanzarHechizo() { tiempoHechizo = 0.7; }
 
 private:
@@ -35,6 +36,7 @@ private:
     double tiempoHuida;
     double tiempoHechizo;
     double efectoTeleport;
+    double esperaEscape;
 
     double distanciaA(QPointF punto) const;
     Situacion percibir(const DatosNivel& datos) const;

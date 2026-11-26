@@ -443,6 +443,9 @@ void NivelCiudadPerdida::actualizarRelojero(double dt)
         relojero->setVelocidad(QPointF(0, 0));
     }
     relojero->actualizar(dt);
+    if (relojero->debeEscapar(aj->pos())) {
+        teletransportarRelojero();
+    }
 
     QRectF zona = zonaRelojero();
     DatosNivel datos;
@@ -493,24 +496,38 @@ void NivelCiudadPerdida::ejecutarAccion(Accion accion)
         }
         relojero->activarEspera(OBSTACULO, 6.0);
     } else if (accion == TELETRANSPORTE) {
-        if (faseJefe) {
-            relojero->teletransportar(QPointF(relojero->x() < 640 ? 740 : 540, Y_TEMPLO));
-        } else {
-            int mejor = perchaActual;
-            double mejorDiferencia = 1e9;
-            for (int i = 0; i < int(perchas.size()); i++) {
-                bool otroLado = (perchas[i].x() < 640) != (perchas[perchaActual].x() < 640);
-                double diferencia = qAbs(perchas[i].y() - perchas[perchaActual].y());
-                if (otroLado && diferencia < mejorDiferencia && perchas[i].y() < aj->y() - 150) {
-                    mejorDiferencia = diferencia;
-                    mejor = i;
-                }
-            }
-            perchaActual = mejor;
-            relojero->teletransportar(perchas[mejor]);
-        }
+        teletransportarRelojero();
         relojero->activarEspera(TELETRANSPORTE, 4.0);
     }
+}
+
+void NivelCiudadPerdida::teletransportarRelojero()
+{
+    if (faseJefe) {
+        // Al extremo del templo que queda lejos de Applejack
+        relojero->teletransportar(QPointF(aj->x() < 640 ? 780 : 500, Y_TEMPLO));
+        return;
+    }
+    int mejor = perchaActual;
+    double mejorDiferencia = 1e9;
+    for (int i = 0; i < int(perchas.size()); i++) {
+        bool otroLado = (perchas[i].x() < 640) != (perchas[perchaActual].x() < 640);
+        double diferencia = qAbs(perchas[i].y() - perchas[perchaActual].y());
+        if (otroLado && diferencia < mejorDiferencia && perchas[i].y() < aj->y() - 150) {
+            mejorDiferencia = diferencia;
+            mejor = i;
+        }
+    }
+    if (mejor == perchaActual) {
+        // Sin percha al otro lado por encima: la mas lejana de Applejack
+        for (int i = 0; i < int(perchas.size()); i++) {
+            if (distancia(perchas[i], aj->pos()) > distancia(perchas[mejor], aj->pos())) {
+                mejor = i;
+            }
+        }
+    }
+    perchaActual = mejor;
+    relojero->teletransportar(perchas[mejor]);
 }
 
 void NivelCiudadPerdida::empezarJefe()
