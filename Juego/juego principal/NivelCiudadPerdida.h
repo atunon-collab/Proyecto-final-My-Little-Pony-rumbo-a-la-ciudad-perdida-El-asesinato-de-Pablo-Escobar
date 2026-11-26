@@ -50,6 +50,7 @@ private:
     double alturaMaxima;
     int valorHud;
     TextoBorde* textoAltura;
+    std::vector<QGraphicsPixmapItem*> vidasRelojero;
 
     void cargar(MemoriaRelojero* memoria);
     void moverApplejack(double dt);

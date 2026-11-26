@@ -528,6 +528,10 @@ void NivelCiudadPerdida::empezarJefe()
     agregarEntidad(hacha2);
     trampas.push_back(hacha1);
     trampas.push_back(hacha2);
+    // La fuente no tiene corazones: se usan las mismas imagenes que las vidas de Applejack
+    for (int i = 0; i < 3; i++) {
+        vidasRelojero.push_back(iconoHud("corazon", 1110 + i * 32, 22, 28));
+    }
     mostrarMensaje("¡Lánzale manzanas al Relojero!", 4);
 }
 
@@ -593,7 +597,10 @@ void NivelCiudadPerdida::actualizarHud()
     }
     valorHud = valor;
     if (faseJefe) {
-        textoAltura->setTexto("Relojero " + QString(3 - golpesAlRelojero, QChar(0x2665)) + QString(golpesAlRelojero, QChar(0x2661)));
+        textoAltura->setTexto("Relojero");
+        for (int i = 0; i < int(vidasRelojero.size()); i++) {
+            vidasRelojero[i]->setOpacity(i < int(vidasRelojero.size()) - golpesAlRelojero ? 1.0 : 0.2);
+        }
     } else {
         textoAltura->setTexto("Altura " + QString::number(porcentaje) + "%");
     }
