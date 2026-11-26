@@ -51,6 +51,8 @@ private:
     int valorHud;
     TextoBorde* textoAltura;
     std::vector<QGraphicsPixmapItem*> vidasRelojero;
+    TextoBorde* textoTiempo;
+    int segundosHud;
 
     void cargar(MemoriaRelojero* memoria);
     void moverApplejack(double dt);

@@ -75,7 +75,12 @@ void NivelMedellin::cargar(MemoriaRelojero* memoria)
         obstaculos.push_back(obstaculo);
     }
 
-    QPointF posicionesPruebas[] = { QPointF(720, 1300), QPointF(1720, 1820), QPointF(1745, 240), QPointF(2850, 1780) };
+    bool sustentacion = config.dificultad == SUSTENTACION;
+    std::vector<QPointF> posicionesPruebas = { QPointF(720, 1300), QPointF(1720, 1820), QPointF(1745, 240), QPointF(2850, 1780) };
+    if (sustentacion) {
+        // Todas en el tejado donde empieza Twilight
+        posicionesPruebas = { QPointF(130, 1170), QPointF(390, 1170), QPointF(130, 1460), QPointF(390, 1460) };
+    }
     for (int i = 0; i < 4; i++) {
         Prueba* prueba = new Prueba(i, imagenPrueba(i), posicionesPruebas[i]);
         agregarEntidad(prueba);
@@ -91,7 +96,8 @@ void NivelMedellin::cargar(MemoriaRelojero* memoria)
         cristales.push_back(cristal);
     }
 
-    portal = new Portal(QPointF(2840, 280));
+    // En la sustentacion el portal queda al cruzar el puente, a pocos segundos del inicio
+    portal = new Portal(sustentacion ? QPointF(1290, 1268) : QPointF(2840, 280));
     agregarEntidad(portal);
 
     for (int i = 0; i < 4; i++) {
@@ -311,7 +317,7 @@ void NivelMedellin::revisarColisiones(double dt)
             }
             if (recogidas == 4) {
                 portal->setListo(true);
-                mostrarMensaje("¡Tienes las 4 pruebas! Corre al portal (arriba a la derecha)", 4);
+                mostrarMensaje(config.dificultad == SUSTENTACION ? "¡Tienes las 4 pruebas! Salta al tejado y cruza el puente" : "¡Tienes las 4 pruebas! Corre al portal (arriba a la derecha)", 4);
             }
         }
     }
@@ -547,7 +553,8 @@ void NivelMedellin::actualizarHud()
     if (segundos != hudSegundos) {
         hudSegundos = segundos;
         textoTiempo->setTexto(QString::number(segundos / 60) + ":" + QString("%1").arg(segundos % 60, 2, 10, QChar('0')));
-        textoTiempo->setColor(tiempoRestante < 25 ? QColor(255, 80, 80) : QColor(Qt::white));
+        // En partidas cortas (Sustentacion) el rojo solo avisa el ultimo cuarto del tiempo
+        textoTiempo->setColor(tiempoRestante < qMin(25.0, config.tiempoPortal / 4) ? QColor(255, 80, 80) : QColor(Qt::white));
     }
     if (recogidas != hudRecogidas) {
         hudRecogidas = recogidas;

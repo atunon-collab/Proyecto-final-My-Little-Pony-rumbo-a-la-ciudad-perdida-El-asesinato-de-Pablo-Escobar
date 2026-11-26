@@ -4,6 +4,7 @@
 const int FACIL = 0;
 const int MEDIO = 1;
 const int DISCORDIA = 2;
+const int SUSTENTACION = 3;
 
 // Valores de cada dificultad
 struct Configuracion

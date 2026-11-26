@@ -59,6 +59,20 @@ Configuracion configuracionPara(int dificultad)
         c.velocidadTrampas = 1.3;
         c.velocidadPlataformas = 1.35;
         c.totems = 1;
+    } else if (dificultad == SUSTENTACION) {
+        // Para mostrar el juego en la sustentacion: niveles cortos que se pasan en menos de 15 segundos
+        c.dificultad = SUSTENTACION;
+        c.tiempoPortal = 20;
+        c.esperaTeleport = 1.0;
+        c.congelamiento = 0.6;
+        c.anomaliasPorPrueba = 0;
+        c.esperaProyectil = 5.0;
+        c.errorPunteria = 100;
+        c.rapidezProyectil = 300;
+        c.intervaloRocas = 6.0;
+        c.henchponies = 0;
+        c.velocidadTrampas = 0.8;
+        c.totems = 1;
     }
     return c;
 }

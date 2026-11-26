@@ -31,7 +31,7 @@ private:
     void mostrarDificultad();
     void mostrarControles();
     void limpiarOpciones();
-    void crearOpciones(const std::vector<QString>& textos, double y);
+    void crearOpciones(const std::vector<QString>& textos, double y, double paso = 54);
     void resaltar();
 };
 

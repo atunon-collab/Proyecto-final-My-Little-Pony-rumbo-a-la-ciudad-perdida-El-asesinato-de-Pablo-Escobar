@@ -22,10 +22,11 @@ const double TIRO_VX = 420;
 const double TIRO_VY = -780;
 const double Y_CIMA = 600;
 const double Y_TEMPLO = 390;
+const double LIMITE_SUSTENTACION = 15;
 
 NivelCiudadPerdida::NivelCiudadPerdida(Juego* juego, MemoriaRelojero* memoria)
     : NivelLateral(juego, ANCHO_PANTALLA, ALTO_CIUDAD, GRAVEDAD), aj(nullptr), relojero(nullptr), maneiac(nullptr),
-      escalera(nullptr), fondo(nullptr), perchaActual(0), faseJefe(false), alturaMaxima(0), valorHud(-1)
+      escalera(nullptr), fondo(nullptr), perchaActual(0), faseJefe(false), alturaMaxima(0), valorHud(-1), textoTiempo(nullptr), segundosHud(-1)
 {
     cargar(memoria);
 }
@@ -72,6 +73,10 @@ void NivelCiudadPerdida::cargar(MemoriaRelojero* memoria)
         agregarPlataforma(d.x, d.y, d.ancho, d.alto, d.textura, d.tipo, d.fase);
     }
     escalera = agregarPlataforma(400, 1800, 240, 30, "plat_piedra");
+    if (config.dificultad == SUSTENTACION) {
+        // Rellena el hueco entre las dos cimas: en la sustentacion no hay como caerse
+        agregarPlataforma(580, Y_CIMA, 340, 60, "plat_piedra");
+    }
     escalera->setHabilitada(false);
 
     ObjetoFijo* muro = new ObjetoFijo(OBJ_MURO, "muro", QPointF(430, 2960), 84, 200);
@@ -152,7 +157,8 @@ void NivelCiudadPerdida::cargar(MemoriaRelojero* memoria)
     }
 
     aj = new Applejack(GRAVEDAD);
-    aj->setPos(120, 3560);
+    // En la sustentacion Applejack empieza en la cima, frente al Relojero
+    aj->setPos(config.dificultad == SUSTENTACION ? QPointF(200, Y_CIMA) : QPointF(120, 3560));
     aj->setZValue(30);
     agregarEntidad(aj);
     puntoControl = aj->pos();
@@ -165,6 +171,10 @@ void NivelCiudadPerdida::cargar(MemoriaRelojero* memoria)
 
     crearCorazones(3, true);
     textoAltura = crearPlacaDerecha("icono_flecha");
+    if (config.dificultad == SUSTENTACION) {
+        iconoHud("icono_tiempo", 540, 12, 46);
+        textoTiempo = textoHud("", fuenteTexto(46), Qt::white, 594, 10);
+    }
     mostrarMensaje("¡Sube hasta el templo! E lanza manzanas | W liana | R lazo", 5);
     moverCamara(aj->pos());
 }
@@ -452,6 +462,11 @@ void NivelCiudadPerdida::actualizarRelojero(double dt)
             datos.disponible[OBSTACULO] = true;
         }
     }
+    if (faseJefe && config.dificultad == SUSTENTACION) {
+        // En la sustentacion se queda en el centro del templo, donde se le puede pegar desde las dos cimas
+        datos.disponible[HUIR] = false;
+        datos.disponible[TELETRANSPORTE] = false;
+    }
     if (relojero->pensar(dt, datos)) {
         ejecutarAccion(relojero->getAccion());
     }
@@ -522,12 +537,15 @@ void NivelCiudadPerdida::empezarJefe()
 {
     faseJefe = true;
     relojero->teletransportar(QPointF(640, Y_TEMPLO));
-    TrampaColgante* hacha1 = new TrampaColgante(QPointF(240, 0), 560, 40, "hacha", 70, 80, config.velocidadTrampas);
-    TrampaColgante* hacha2 = new TrampaColgante(QPointF(1040, 0), 560, -40, "hacha", 70, 80, config.velocidadTrampas);
-    agregarEntidad(hacha1);
-    agregarEntidad(hacha2);
-    trampas.push_back(hacha1);
-    trampas.push_back(hacha2);
+    // Las hachas cuidan los dos lugares desde donde se le pega al Relojero; en la sustentacion no estan
+    if (config.dificultad != SUSTENTACION) {
+        TrampaColgante* hacha1 = new TrampaColgante(QPointF(240, 0), 560, 40, "hacha", 70, 80, config.velocidadTrampas);
+        TrampaColgante* hacha2 = new TrampaColgante(QPointF(1040, 0), 560, -40, "hacha", 70, 80, config.velocidadTrampas);
+        agregarEntidad(hacha1);
+        agregarEntidad(hacha2);
+        trampas.push_back(hacha1);
+        trampas.push_back(hacha2);
+    }
     // La fuente no tiene corazones: se usan las mismas imagenes que las vidas de Applejack
     for (int i = 0; i < 3; i++) {
         vidasRelojero.push_back(iconoHud("corazon", 1110 + i * 32, 22, 28));
@@ -581,6 +599,9 @@ void NivelCiudadPerdida::actualizar(double dt)
         actualizarHud();
         if (golpesAlRelojero >= 3) {
             ganar(1000 + aj->getVida() * 300);
+        } else if (textoTiempo != nullptr && tiempoJuego >= LIMITE_SUSTENTACION) {
+            // En la sustentacion el nivel se completa aunque no se haya vencido al Relojero
+            ganar(golpesAlRelojero * 300);
         }
     }
     terminarCuadro(dt);
@@ -589,6 +610,13 @@ void NivelCiudadPerdida::actualizar(double dt)
 void NivelCiudadPerdida::actualizarHud()
 {
     mostrarCorazones(aj->getVida());
+    if (textoTiempo != nullptr) {
+        int segundos = qMax(0, qCeil(LIMITE_SUSTENTACION - tiempoJuego));
+        if (segundos != segundosHud) {
+            segundosHud = segundos;
+            textoTiempo->setTexto("0:" + QString("%1").arg(segundos, 2, 10, QChar('0')));
+        }
+    }
     // El texto solo se arma de nuevo cuando cambia el numero que muestra
     int porcentaje = qBound(0, int(100 * (ALTO_CIUDAD - aj->y()) / (ALTO_CIUDAD - Y_CIMA)), 100);
     int valor = faseJefe ? 1000 + golpesAlRelojero : porcentaje;

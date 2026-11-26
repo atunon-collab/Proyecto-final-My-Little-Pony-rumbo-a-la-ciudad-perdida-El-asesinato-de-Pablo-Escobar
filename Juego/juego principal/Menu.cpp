@@ -35,7 +35,7 @@ Menu::Menu(Juego* juego)
     panel = agregarMarco("ui_menu_chico", 390, 320);
     cursor = escena->addPixmap(cargarImagen(":/objetos/icono_flecha.png", 40, 30));
     cursor->setZValue(1001);
-    descripcion = agregarTexto("", fuenteTexto(20), CREMA, 420, 522, 440);
+    descripcion = agregarTexto("", fuenteTexto(20), CREMA, 420, 532, 440);
     textoControles = agregarTexto("", fuenteTexto(20), CREMA, 205, 335, 870);
     juego->getSonido()->musica("medellin");
     mostrarPrincipal();
@@ -51,11 +51,11 @@ void Menu::limpiarOpciones()
     textoControles->setPlainText("");
 }
 
-void Menu::crearOpciones(const std::vector<QString>& textos, double y)
+void Menu::crearOpciones(const std::vector<QString>& textos, double y, double paso)
 {
     for (int i = 0; i < int(textos.size()); i++) {
         TextoBorde* item = agregarTextoBorde(textos[i], fuenteTexto(30), Qt::white, 0, 0, 3);
-        centrar(item, y + i * 54);
+        centrar(item, y + i * paso);
         opciones.push_back(item);
     }
 }
@@ -81,7 +81,7 @@ void Menu::mostrarDificultad()
     panel->setPixmap(cargarImagen(":/fondos/ui_menu.png"));
     panel->setPos(390, 310);
     subtitulo->setVisible(true);
-    crearOpciones({ "Facil", "Medio", "Discordia" }, 356);
+    crearOpciones({ "Facil", "Medio", "Discordia", "Sustentacion" }, 364, 42);
     cursor->setVisible(true);
     resaltar();
 }
@@ -115,7 +115,8 @@ void Menu::resaltar()
         const char* descripciones[] = {
             "Más tiempo, más objetos de ayuda y un Relojero que apunta con menos precisión.",
             "La experiencia pensada para el juego: el Relojero aprende y presiona.",
-            "Menos tiempo y menos ayuda. El Relojero aprende rápido y lanza ataques dobles."
+            "Menos tiempo y menos ayuda. El Relojero aprende rápido y lanza ataques dobles.",
+            "Para la sustentación: niveles cortos; si se acaba el tiempo, el nivel se completa."
         };
         descripcion->setPlainText(descripciones[opcion]);
     }
