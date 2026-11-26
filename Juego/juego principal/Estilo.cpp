@@ -4,36 +4,24 @@
 #include <QPen>
 #include <QBrush>
 
-static QString familiaTexto = "Verdana";
-static QString familiaTitulo = "Verdana";
+static QString familia = "Verdana";
 
-static QString registrar(const QString& ruta)
+void cargarFuente()
 {
-    int id = QFontDatabase::addApplicationFont(ruta);
+    int id = QFontDatabase::addApplicationFont(":/fuentes/PixelifySans.ttf");
     if (id < 0) {
-        throw ErrorJuego("No se pudo cargar la fuente: " + ruta);
+        throw ErrorJuego("No se pudo cargar la fuente del juego");
     }
-    return QFontDatabase::applicationFontFamilies(id).at(0);
-}
-
-void cargarFuentes()
-{
-    familiaTexto = registrar(":/fuentes/PixelifySans.ttf");
-    familiaTitulo = registrar(":/fuentes/PressStart2P.ttf");
+    familia = QFontDatabase::applicationFontFamilies(id).at(0);
 }
 
 QFont fuenteTexto(int pixeles)
 {
-    QFont fuente(familiaTexto);
+    QFont fuente(familia);
     fuente.setPixelSize(pixeles);
     fuente.setWeight(QFont::DemiBold);
-    return fuente;
-}
-
-QFont fuenteTitulo(int pixeles)
-{
-    QFont fuente(familiaTitulo);
-    fuente.setPixelSize(pixeles);
+    // Sin ligaduras: en esta fuente "fi" se dibuja como una sola letra que parece una A
+    fuente.setStyleStrategy(QFont::PreferNoShaping);
     return fuente;
 }
 

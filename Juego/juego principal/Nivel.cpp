@@ -8,6 +8,7 @@
 #include "Estilo.h"
 #include <QPen>
 #include <QBrush>
+#include <QRandomGenerator>
 
 const int NIVEL_JUGANDO = 0;
 const int NIVEL_PAUSA = 1;
@@ -83,8 +84,7 @@ void Nivel::terminarCuadro(double dt)
         if (tiempoMensaje > 0) {
             tiempoMensaje -= dt;
             if (tiempoMensaje <= 0) {
-                textoMensaje->setTexto("");
-                bannerMensaje->setVisible(false);
+                ocultarMensaje();
             }
         }
     }
@@ -196,6 +196,18 @@ void Nivel::mostrarMensaje(const QString& texto, double segundos)
     tiempoMensaje = segundos;
 }
 
+void Nivel::ocultarMensaje()
+{
+    textoMensaje->setTexto("");
+    bannerMensaje->setVisible(false);
+    tiempoMensaje = 0;
+}
+
+double Nivel::azar(double minimo, double maximo)
+{
+    return minimo + QRandomGenerator::global()->generateDouble() * (maximo - minimo);
+}
+
 void Nivel::ganar(int puntos)
 {
     juego->puntaje += puntos;
@@ -209,6 +221,8 @@ void Nivel::perder(const QString& motivo)
 {
     estado = NIVEL_PERDIDO;
     juego->getSonido()->efecto("golpe");
+    // El aviso de arriba tapaba el borde del panel
+    ocultarMensaje();
     panelPausa->setVisible(true);
     mostrarPanel(motivo, "El Relojero recuerda lo que aprendió de ti.", "Enter: reintentar", "Esc: menú", -1);
     lineasPanel[0]->setColor(QColor(255, 107, 107));
@@ -269,6 +283,7 @@ void Nivel::teclaPresionada(int tecla)
     if (tecla == Qt::Key_Escape && estado == NIVEL_JUGANDO) {
         estado = NIVEL_PAUSA;
         opcionPausa = 0;
+        ocultarMensaje();
         panelPausa->setVisible(true);
         mostrarPausa();
     }

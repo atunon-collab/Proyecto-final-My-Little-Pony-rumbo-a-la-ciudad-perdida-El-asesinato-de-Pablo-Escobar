@@ -23,7 +23,6 @@ class Manzana : public Entidad
 public:
     Manzana(QPointF inicio, double vx, double vy, double gravedad);
     void actualizar(double dt);
-    double getVy() const { return trayectoria.getVy(); }
 
 private:
     MovimientoParabolico trayectoria;

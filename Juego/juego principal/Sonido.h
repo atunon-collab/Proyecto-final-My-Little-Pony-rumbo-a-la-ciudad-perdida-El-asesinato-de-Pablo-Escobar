@@ -16,7 +16,6 @@ public:
     ~Sonido();
 
     void musica(const QString& nombre);
-    void detenerMusica();
     void efecto(const QString& nombre);
 
 private:

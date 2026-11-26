@@ -4,7 +4,6 @@
 #include <QSoundEffect>
 #include <QUrl>
 #include <QFile>
-#include <QCoreApplication>
 
 Sonido::Sonido()
 {
@@ -40,14 +39,6 @@ void Sonido::musica(const QString& nombre)
     musicaActual = nombre;
     reproductorMusica->stop();
     const char* extensiones[] = { ".mp3", ".ogg", ".wav" };
-    QString carpeta = QCoreApplication::applicationDirPath() + "/musica/";
-    for (const char* extension : extensiones) {
-        if (QFile::exists(carpeta + nombre + extension)) {
-            reproductorMusica->setSource(QUrl::fromLocalFile(carpeta + nombre + extension));
-            reproductorMusica->play();
-            return;
-        }
-    }
     for (const char* extension : extensiones) {
         QString ruta = ":/sonidos/musica_" + nombre + extension;
         if (QFile::exists(ruta)) {
@@ -56,12 +47,6 @@ void Sonido::musica(const QString& nombre)
             return;
         }
     }
-}
-
-void Sonido::detenerMusica()
-{
-    musicaActual = "";
-    reproductorMusica->stop();
 }
 
 void Sonido::efecto(const QString& nombre)

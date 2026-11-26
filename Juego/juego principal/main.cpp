@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     qputenv("QT_ENABLE_HIGHDPI_SCALING", "0");
     QApplication app(argc, argv);
     try {
-        cargarFuentes();
+        cargarFuente();
         Juego juego;
         juego.show();
         return app.exec();

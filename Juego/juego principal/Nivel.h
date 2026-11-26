@@ -57,6 +57,7 @@ protected:
     void mostrarCorazones(int vida);
     void mostrarMensaje(const QString& texto, double segundos);
     void ganar(int puntos);
+    static double azar(double minimo, double maximo);
     void perder(const QString& motivo);
 
 private:
@@ -74,6 +75,7 @@ private:
 
     void mostrarPanel(const QString& titulo, const QString& linea1, const QString& linea2, const QString& linea3, int resaltada);
     void mostrarPausa();
+    void ocultarMensaje();
 };
 
 #endif

@@ -23,8 +23,8 @@ Menu::Menu(Juego* juego)
     placaTitulo = escena->addPixmap(cargarImagen(":/objetos/titulo_marco.png", 1000, 240));
     placaTitulo->setPos((ANCHO_PANTALLA - placaTitulo->pixmap().width()) / 2, 20);
     placaTitulo->setZValue(990);
-    titulo1 = agregarTextoBorde("RUMBO A LA", fuenteTitulo(34), DORADO, 0, 0, 4);
-    titulo2 = agregarTextoBorde("CIUDAD PERDIDA", fuenteTitulo(34), DORADO, 0, 0, 4);
+    titulo1 = agregarTextoBorde("RUMBO A LA", fuenteTexto(46), DORADO, 0, 0, 4);
+    titulo2 = agregarTextoBorde("CIUDAD PERDIDA", fuenteTexto(46), DORADO, 0, 0, 4);
     subtitulo = agregarTextoBorde("El Asesinato de Pablo Escobar", fuenteTexto(30), CREMA, 0, 0, 4);
     centrar(titulo1, 95);
     centrar(titulo2, 145);
@@ -54,7 +54,7 @@ void Menu::limpiarOpciones()
 void Menu::crearOpciones(const std::vector<QString>& textos, double y)
 {
     for (int i = 0; i < int(textos.size()); i++) {
-        TextoBorde* item = agregarTextoBorde(textos[i], fuenteTitulo(24), Qt::white, 0, 0, 3);
+        TextoBorde* item = agregarTextoBorde(textos[i], fuenteTexto(30), Qt::white, 0, 0, 3);
         centrar(item, y + i * 54);
         opciones.push_back(item);
     }

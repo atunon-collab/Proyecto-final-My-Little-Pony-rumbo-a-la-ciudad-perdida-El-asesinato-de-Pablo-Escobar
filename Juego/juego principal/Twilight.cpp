@@ -4,7 +4,7 @@ const double GRAVEDAD_SALTO = 1500;
 const double VELOCIDAD_SALTO = 520;
 
 Twilight::Twilight(const Configuracion& config)
-    : Poni("Twilight Sparkle", 3, 210), magia(100), esperaTeleport(0), analizando(0), congelada(0),
+    : Personaje(3, 210), magia(100), esperaTeleport(0), analizando(0), congelada(0),
       esperaTeleportMax(config.esperaTeleport), efectoTeleport(0), inmuneCongelar(0), vz(0)
 {
     agregarAnimacion("quieta", "twilight_quieta");

@@ -12,7 +12,6 @@ public:
     void actualizar(double dt);
     QPointF posicion() const;
 
-    void setCentro(QPointF c) { centro = c; }
     double getAngulo() const { return angulo; }
     double getOmega() const { return omega; }
 
