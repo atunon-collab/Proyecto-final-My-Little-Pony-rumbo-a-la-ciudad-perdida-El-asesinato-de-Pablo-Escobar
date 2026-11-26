@@ -6,9 +6,8 @@
 #include <QString>
 #include <QGraphicsSimpleTextItem>
 
-void cargarFuentes();
+void cargarFuente();
 QFont fuenteTexto(int pixeles);
-QFont fuenteTitulo(int pixeles);
 
 const QColor DORADO(255, 214, 92);
 const QColor CREMA(250, 240, 215);

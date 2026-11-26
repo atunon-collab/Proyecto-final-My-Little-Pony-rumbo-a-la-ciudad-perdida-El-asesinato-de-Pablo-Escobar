@@ -127,7 +127,7 @@ void NivelMedellin::cargar(MemoriaRelojero* memoria)
     crearCorazones(3, false);
     barraMagia = barraConIcono("icono_magia", 66, QColor(160, 110, 255));
     iconoHud("icono_tiempo", 540, 12, 46);
-    textoTiempo = textoHud("", fuenteTitulo(30), Qt::white, 594, 22);
+    textoTiempo = textoHud("", fuenteTexto(46), Qt::white, 594, 10);
     textoPruebas = crearPlacaDerecha("icono_pruebas");
     textoAnalizar = textoHud("", fuenteTexto(21), CREMA, 935, 80);
     textoAyuda = textoHud("WASD moverse   Espacio saltar   E teletransporte   Q analizar   Esc pausa",
