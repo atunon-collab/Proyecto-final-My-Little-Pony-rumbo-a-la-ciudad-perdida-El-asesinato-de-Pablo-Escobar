@@ -33,7 +33,7 @@ Escena::Escena(Juego* juego, const DatosEscena& datos)
     agregarMarco("ui_dialogo", 40, 535);
     textoNombre = agregarTextoBorde("", fuenteTexto(20), DORADO, 82, 593, 3);
     textoDialogo = agregarTexto("", fuenteTexto(22), CREMA, 76, 613, 1110);
-    textoAyuda = agregarTexto("Enter continuar | Esc saltar", fuenteTexto(15), QColor(170, 170, 200), 950, 591);
+    agregarTexto("Enter continuar | Esc saltar", fuenteTexto(15), QColor(170, 170, 200), 950, 591);
     if (!datos.musica.isEmpty()) {
         juego->getSonido()->musica(datos.musica);
     }

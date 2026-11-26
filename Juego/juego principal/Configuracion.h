@@ -1,8 +1,6 @@
 #ifndef CONFIGURACION_H
 #define CONFIGURACION_H
 
-#include <QString>
-
 const int FACIL = 0;
 const int MEDIO = 1;
 const int DISCORDIA = 2;
@@ -11,7 +9,6 @@ const int DISCORDIA = 2;
 struct Configuracion
 {
     int dificultad;
-    QString nombre;
 
     double tiempoPortal;
     double multObjetos;

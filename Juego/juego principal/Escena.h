@@ -62,7 +62,6 @@ private:
     int linea;
     TextoBorde* textoNombre;
     QGraphicsTextItem* textoDialogo;
-    QGraphicsTextItem* textoAyuda;
 
     void empezarLinea();
 };
