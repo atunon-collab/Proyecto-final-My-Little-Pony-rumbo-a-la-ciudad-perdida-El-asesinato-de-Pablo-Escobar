@@ -18,10 +18,7 @@ namespace Nucleo {
     -Configuracion config
     -MemoriaRelojero memoria
     -int paso
-    -Menu* menu
-    -Escena* escena
-    -NivelMedellin* medellin
-    -NivelCiudadPerdida* ciudad
+    -Pantalla* actual
     +int puntaje
     +setDificultad(int)
     -cicloDelJuego()
@@ -44,7 +41,6 @@ namespace Nucleo {
     -map~QString,QSoundEffect*~ efectos
     +musica(QString)
     +efecto(QString)
-    +voz(QString)
   }
   class ErrorJuego {
     -QString mensaje
@@ -171,8 +167,7 @@ namespace Entidades {
     +empujeTangente() QPointF
   }
   class Portal {
-    -vector~MovimientoCircular~ giros
-    +actualizar(double)
+    +setListo(bool)
   }
   class Plataforma {
     +actualizar(double)
@@ -197,9 +192,6 @@ namespace Personajes {
     #QPointF velocidad
     +recibirDanio(int)
     +curar(int)
-  }
-  class Poni {
-    #QString nombre
   }
   class Twilight {
     +double magia
@@ -312,9 +304,8 @@ Entidad <|-- Item
 Entidad <|-- Prueba
 Entidad <|-- ObjetoFijo
 Entidad <|-- Efecto
-Personaje <|-- Poni
-Poni <|-- Twilight
-Poni <|-- Applejack
+Personaje <|-- Twilight
+Personaje <|-- Applejack
 Personaje <|-- Patrullero
 Personaje <|-- ManeIac
 Personaje <|-- Relojero
@@ -323,7 +314,6 @@ Applejack *-- MovimientoParabolico
 Applejack o-- MovimientoPendular
 ObjetoPendular *-- MovimientoPendular
 AnomaliaTemporal *-- MovimientoCircular
-Portal *-- MovimientoCircular
 Relojero o-- MemoriaRelojero
 Relojero ..> DatosNivel
 NivelMedellin *-- Twilight

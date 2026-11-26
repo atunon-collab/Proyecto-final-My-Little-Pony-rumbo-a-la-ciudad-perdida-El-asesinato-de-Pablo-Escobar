@@ -14,7 +14,6 @@ class NivelCiudadPerdida
 class TextoBorde
 class Entidad
 class Personaje
-class Poni
 class Twilight
 class Applejack
 class Relojero
@@ -53,15 +52,13 @@ Entidad <|-- ObjetoPendular
 Entidad <|-- AnomaliaTemporal
 Entidad <|-- Portal
 Entidad <|-- Efecto
-Personaje <|-- Poni
 Personaje <|-- Relojero
 Personaje <|-- Patrullero
 Personaje <|-- ManeIac
-Poni <|-- Twilight
-Poni <|-- Applejack
+Personaje <|-- Twilight
+Personaje <|-- Applejack
 Manzana *-- MovimientoParabolico
 Applejack *-- MovimientoParabolico
 ObjetoPendular *-- MovimientoPendular
 AnomaliaTemporal *-- MovimientoCircular
-Portal *-- MovimientoCircular
 Relojero o-- MemoriaRelojero
