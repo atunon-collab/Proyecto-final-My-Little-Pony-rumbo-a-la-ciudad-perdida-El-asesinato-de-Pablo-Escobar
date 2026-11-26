@@ -8,6 +8,7 @@
 #include "Estilo.h"
 #include <QPen>
 #include <QBrush>
+#include <QRandomGenerator>
 
 const int NIVEL_JUGANDO = 0;
 const int NIVEL_PAUSA = 1;
@@ -200,6 +201,11 @@ void Nivel::ocultarMensaje()
     textoMensaje->setTexto("");
     bannerMensaje->setVisible(false);
     tiempoMensaje = 0;
+}
+
+double Nivel::azar(double minimo, double maximo)
+{
+    return minimo + QRandomGenerator::global()->generateDouble() * (maximo - minimo);
 }
 
 void Nivel::ganar(int puntos)

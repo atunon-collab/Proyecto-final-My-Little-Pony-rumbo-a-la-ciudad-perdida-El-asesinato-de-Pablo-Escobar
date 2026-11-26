@@ -9,7 +9,7 @@
 #include "Enemigos.h"
 #include "Recursos.h"
 #include "Estilo.h"
-#include <QRandomGenerator>
+#include <QLineF>
 #include <QtMath>
 #include <QPen>
 
@@ -22,17 +22,6 @@ const double TIRO_VX = 420;
 const double TIRO_VY = -780;
 const double Y_CIMA = 600;
 const double Y_TEMPLO = 390;
-
-static double distancia(QPointF a, QPointF b)
-{
-    QPointF d = a - b;
-    return qSqrt(d.x() * d.x() + d.y() * d.y());
-}
-
-static double azar(double minimo, double maximo)
-{
-    return minimo + QRandomGenerator::global()->generateDouble() * (maximo - minimo);
-}
 
 NivelCiudadPerdida::NivelCiudadPerdida(Juego* juego, MemoriaRelojero* memoria)
     : NivelLateral(juego, ANCHO_PANTALLA, ALTO_CIUDAD, GRAVEDAD), aj(nullptr), relojero(nullptr), maneiac(nullptr),
@@ -200,7 +189,7 @@ void NivelCiudadPerdida::teclaPresionada(int tecla)
         lanzarManzana();
     } else if (tecla == Qt::Key_R && !aj->estaColgada() && aj->esperaAgarre <= 0) {
         for (ObjetoFijo* gancho : ganchos) {
-            if (gancho->y() < aj->y() - 60 && distancia(gancho->pos(), aj->pos()) < 340) {
+            if (gancho->y() < aj->y() - 60 && QLineF(gancho->pos(), aj->pos()).length() < 340) {
                 aj->lanzarLazo(gancho->pos(), aj->x() < gancho->x());
                 break;
             }
@@ -230,7 +219,7 @@ void NivelCiudadPerdida::moverApplejack(double dt)
     }
     if (estaPresionada(Qt::Key_W) && aj->esperaAgarre <= 0) {
         for (Liana* liana : lianas) {
-            if (distancia(liana->pos(), aj->pos() + QPointF(0, -70)) < 95) {
+            if (QLineF(liana->pos(), aj->pos() + QPointF(0, -70)).length() < 95) {
                 aj->colgarse(liana->getPendulo());
                 return;
             }
@@ -460,7 +449,7 @@ void NivelCiudadPerdida::actualizarRelojero(double dt)
     }
     datos.disponible[OBSTACULO] = false;
     for (TrampaColgante* trampa : trampas) {
-        if (distancia(trampa->pos(), aj->pos()) < 600) {
+        if (QLineF(trampa->pos(), aj->pos()).length() < 600) {
             datos.disponible[OBSTACULO] = true;
         }
     }
@@ -484,7 +473,7 @@ void NivelCiudadPerdida::ejecutarAccion(Accion accion)
         TrampaColgante* cercana = nullptr;
         double menor = 1e9;
         for (TrampaColgante* trampa : trampas) {
-            double d = distancia(trampa->pos(), aj->pos());
+            double d = QLineF(trampa->pos(), aj->pos()).length();
             if (d < menor) {
                 menor = d;
                 cercana = trampa;
@@ -521,7 +510,7 @@ void NivelCiudadPerdida::teletransportarRelojero()
     if (mejor == perchaActual) {
         // Sin percha al otro lado por encima: la mas lejana de Applejack
         for (int i = 0; i < int(perchas.size()); i++) {
-            if (distancia(perchas[i], aj->pos()) > distancia(perchas[mejor], aj->pos())) {
+            if (QLineF(perchas[i], aj->pos()).length() > QLineF(perchas[mejor], aj->pos()).length()) {
                 mejor = i;
             }
         }
@@ -569,7 +558,7 @@ void NivelCiudadPerdida::actualizar(double dt)
         revisarColisiones();
         actualizarRelojero(dt);
 
-        if (!maneiac->estaVencida() && distancia(maneiac->pos(), aj->pos()) < 750 && maneiac->quiereLanzar()) {
+        if (!maneiac->estaVencida() && QLineF(maneiac->pos(), aj->pos()).length() < 750 && maneiac->quiereLanzar()) {
             Proyectil* bola = new Proyectil("bola_cabello", 46, maneiac->pos() + QPointF(-40, -120), aj->pos() + QPointF(0, -40), config.rapidezProyectil);
             agregarEntidad(bola);
             bolas.push_back(bola);
