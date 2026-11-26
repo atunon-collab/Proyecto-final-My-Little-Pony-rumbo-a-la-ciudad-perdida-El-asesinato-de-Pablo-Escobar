@@ -15,10 +15,11 @@ class Pantalla
 {
 public:
     Pantalla(Juego* juego);
-    ~Pantalla();
+    virtual ~Pantalla();
 
     QGraphicsScene* getEscena() const { return escena; }
-    void teclaPresionada(int tecla);
+    virtual void actualizar(double dt) = 0;
+    virtual void teclaPresionada(int tecla);
     void teclaSoltada(int tecla);
     bool estaTerminada() const { return terminada; }
     int getResultado() const { return resultado; }
